@@ -1,37 +1,64 @@
-## Welcome to GitHub Pages
+# Eric McKenna - Portfolio
 
-You can use the [editor on GitHub](https://github.com/emckenna/emckenna.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Professional portfolio website showcasing my experience as a Senior Software Engineer specializing in Ruby on Rails and full-stack development.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+🔗 **Live Site:** [emckenna.github.io](https://emckenna.github.io)
 
-### Markdown
+## About
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+This portfolio site highlights:
+- 11+ years of Ruby on Rails expertise
+- Team leadership and mentoring experience
+- Technical skills across backend, frontend, testing, and infrastructure
+- Professional experience and project work
+- Contact information and resume downloads
 
-```markdown
-Syntax highlighted code block
+## Features
 
-# Header 1
-## Header 2
-### Header 3
+- 📱 Responsive design (mobile-friendly)
+- 🎨 Modern UI with Inter font
+- 📄 Resume available in PDF, DOCX, and Markdown formats
+- 🖼️ Custom social share image for LinkedIn/Twitter
+- 🔗 Social media integration (GitHub, LinkedIn)
+- ♿ Accessible with semantic HTML and ARIA labels
 
-- Bulleted
-- List
+## Technology Stack
 
-1. Numbered
-2. List
+- HTML5
+- CSS3 (vanilla, no frameworks)
+- Google Fonts (Inter)
+- GitHub Pages hosting
 
-**Bold** and _Italic_ and `Code` text
+## Local Development
 
-[Link](url) and ![Image](src)
+To view locally:
+```bash
+# Clone the repository
+git clone https://github.com/emckenna/emckenna.github.io.git
+cd emckenna.github.io
+
+# Open in browser
+open index.html
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Structure
 
-### Jekyll Themes
+```
+├── index.html          # Main portfolio page
+├── styles.css          # All styling
+├── resume/            # Resume files (PDF, DOCX, MD)
+├── bin/               # Utility scripts
+├── emckenna-profile.png   # Profile photo
+└── og-image.png       # Social share image
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/emckenna/emckenna.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+## Contact
 
-### Support or Contact
+- 📧 eric.mckenna@gmail.com
+- 💼 [LinkedIn](https://linkedin.com/in/ericmckenna)
+- 🐙 [GitHub](https://github.com/emckenna)
+- 📍 Silver Spring, MD
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## License
+
+© 2025 Eric McKenna. All rights reserved.
