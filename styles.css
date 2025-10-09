@@ -518,8 +518,35 @@ footer {
     padding: 2rem 0;
 }
 
+footer .container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.footer-social {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.footer-social-icon {
+    color: white;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+}
+
+.footer-social-icon:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
 footer p {
     opacity: 0.8;
+    margin: 0;
 }
 
 /* Responsive Design */
