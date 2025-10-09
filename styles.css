@@ -1,4 +1,6 @@
 /* Reset and Base Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -24,10 +26,11 @@ html {
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.6;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.7;
     color: var(--text-color);
     background-color: var(--bg-color);
+    font-size: 16px;
 }
 
 .container {
@@ -174,7 +177,7 @@ section:nth-child(even) {
     max-width: 800px;
     margin: 0 auto 3rem;
     font-size: 1.125rem;
-    line-height: 1.8;
+    line-height: 1.9;
     color: var(--text-light);
 }
 
@@ -197,7 +200,7 @@ section:nth-child(even) {
 
 .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
 }
 
@@ -303,6 +306,8 @@ section:nth-child(even) {
     padding-left: 1.5rem;
     position: relative;
     color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.7;
 }
 
 .timeline-content li::before {
@@ -315,7 +320,8 @@ section:nth-child(even) {
 
 .timeline-content p {
     color: var(--text-light);
-    line-height: 1.8;
+    line-height: 1.9;
+    font-size: 1rem;
 }
 
 /* Projects Section */
@@ -350,6 +356,7 @@ section:nth-child(even) {
     color: var(--text-light);
     margin-bottom: 1.5rem;
     line-height: 1.8;
+    font-size: 1rem;
 }
 
 .project-card.placeholder {
@@ -384,7 +391,7 @@ section:nth-child(even) {
 
 .contact-intro {
     font-size: 1.125rem;
-    line-height: 1.8;
+    line-height: 1.9;
     color: var(--text-light);
     margin-bottom: 3rem;
 }
@@ -472,7 +479,7 @@ footer p {
     }
 
     .skills-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .projects-grid {
@@ -493,5 +500,9 @@ footer p {
     .btn {
         width: 100%;
         text-align: center;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr;
     }
 }
