@@ -418,8 +418,10 @@ section:nth-child(even) {
 
 .contact-methods {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto 2rem;
 }
 
 .contact-item {
@@ -447,8 +449,15 @@ section:nth-child(even) {
     text-decoration: underline;
 }
 
-.contact-item p {
+.contact-location {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.contact-location p {
     color: var(--text-light);
+    font-size: 1.125rem;
+    font-weight: 500;
 }
 
 /* Footer */
@@ -518,6 +527,10 @@ footer p {
 
     .contact-methods {
         grid-template-columns: 1fr;
+    }
+
+    .contact-location p {
+        font-size: 1rem;
     }
 }
 
