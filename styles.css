@@ -447,26 +447,23 @@ section:nth-child(even) {
 
 .projects-footer {
     text-align: center;
-    margin-top: 3rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
 }
 
 .github-link {
-    display: inline-block;
-    color: var(--primary-color);
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-light);
     text-decoration: none;
-    font-weight: 600;
-    font-size: 1.125rem;
-    padding: 1rem 2rem;
-    border: 2px solid var(--primary-color);
-    border-radius: 0.5rem;
-    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.3s ease;
 }
 
 .github-link:hover {
-    background-color: var(--primary-color);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    color: var(--primary-color);
 }
 
 /* Contact Section */
