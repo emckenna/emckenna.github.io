@@ -83,7 +83,7 @@ expertise_text = "Ruby on Rails • Full Stack • Team Lead"
 draw.text((text_x, text_y_start + 160), expertise_text, font=body_font, fill=(255, 255, 255, 230))
 
 # Years of experience
-years_text = "11+ Years Experience"
+years_text = "25+ Years Experience"
 draw.text((text_x, text_y_start + 220), years_text, font=body_font, fill=(255, 255, 255, 230))
 
 # Save the image
