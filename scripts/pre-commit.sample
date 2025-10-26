@@ -1,0 +1,20 @@
+#!/bin/bash
+# Pre-commit hook to update version SHA in index.html
+# Install by copying to .git/hooks/pre-commit and making executable:
+# cp scripts/pre-commit.sample .git/hooks/pre-commit
+# chmod +x .git/hooks/pre-commit
+
+# Only update version if index.html is being committed
+if git diff --cached --name-only | grep -q "index.html"; then
+    echo "Updating version SHA..."
+
+    # Run the update script
+    ./scripts/update-version.sh
+
+    # Stage the updated index.html
+    git add index.html
+
+    echo "Version updated and staged"
+fi
+
+exit 0
