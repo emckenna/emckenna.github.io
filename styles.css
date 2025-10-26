@@ -398,7 +398,7 @@ section:nth-child(even) {
 
 .project-card {
     perspective: 1000px;
-    height: 280px;
+    height: 240px;
     cursor: pointer;
 }
 
@@ -421,7 +421,7 @@ section:nth-child(even) {
     height: 100%;
     backface-visibility: hidden;
     background-color: white;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 0.5rem;
     box-shadow: var(--shadow);
     display: flex;
@@ -439,13 +439,13 @@ section:nth-child(even) {
 
 .project-card h3 {
     font-size: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     color: var(--text-color);
 }
 
 .project-card p {
     color: var(--text-light);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     line-height: 1.6;
     font-size: 0.875rem;
 }
