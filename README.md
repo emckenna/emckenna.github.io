@@ -17,10 +17,18 @@ This portfolio site highlights:
 
 - 📱 Responsive design (mobile-friendly)
 - 🎨 Modern UI with Inter font
+- 🔄 Interactive flip card animations for project showcase
 - 📄 Resume available in PDF, DOCX, and Markdown formats
 - 🖼️ Custom social share image for LinkedIn/Twitter
 - 🔗 Social media integration (GitHub, LinkedIn)
 - ♿ Accessible with semantic HTML and ARIA labels
+
+## Featured Projects
+
+- ☕ [Make a Coffee](https://make-a-coffee.vercel.app/) - AI-powered coffee instruction generator
+- 🎴 [Flash Cards](https://emckenna.github.io/flash-cards/) - Beautiful flashcard app for active recall
+- 🗽 [Constitution Compass](https://github.com/emckenna/constitution-compass) - Interactive civic education tool
+- 📄 [Markdown Resume Manager](https://github.com/emckenna/markdown-resume-manager) - Resume/cover letter automation
 
 ## Technology Stack
 
@@ -37,7 +45,14 @@ To view locally:
 git clone https://github.com/emckenna/emckenna.github.io.git
 cd emckenna.github.io
 
-# Open in browser
+# Serve with local web server
+python3 -m http.server 8000
+# Then open http://localhost:8000
+
+# Or use ngrok for public URL (requires auth token)
+ngrok http 8000
+
+# Or open directly in browser
 open index.html
 ```
 
