@@ -12,11 +12,11 @@ Updates the version SHA in the footer of index.html to match the current git com
 
 ### Automatic Updates
 
-A pre-commit hook has been installed at `.git/hooks/pre-commit` that automatically runs this script whenever index.html is being committed. This ensures the version SHA is always up-to-date without manual intervention.
+A pre-commit hook has been installed at `.git/hooks/pre-commit` that automatically runs this script on every commit. This ensures the version SHA is always up-to-date without manual intervention.
 
 The hook will:
-1. Detect if index.html is being committed
-2. Run the update-version.sh script
+1. Run the update-version.sh script on every commit
+2. Update the SHA to match the current commit
 3. Stage the updated index.html
 4. Continue with the commit
 
