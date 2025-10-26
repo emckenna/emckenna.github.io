@@ -1,0 +1,8 @@
+# VS Code workspace files
+*.code-workspace
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
