@@ -29,6 +29,7 @@ This portfolio site highlights:
 - 🎴 [Flash Cards](https://emckenna.github.io/flash-cards/) - Beautiful flashcard app for active recall
 - 🗽 [Constitution Compass](https://constitution-compass.vercel.app) - Interactive civic education tool
 - 📄 [Markdown Resume Manager](https://github.com/emckenna/markdown-resume-manager) - Resume/cover letter automation
+- 📊 [JobTrail](https://github.com/emckenna/jobtrail) - Rails 8 job application tracker with analytics *(Work in Progress)*
 
 ## Technology Stack
 
