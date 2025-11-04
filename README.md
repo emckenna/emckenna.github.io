@@ -28,7 +28,7 @@ This portfolio site highlights:
 - ☕ [Make a Coffee](https://make-a-coffee.vercel.app/) - AI-powered coffee instruction generator
 - 🎴 [Flash Cards](https://emckenna.github.io/flash-cards/) - Beautiful flashcard app for active recall
 - 🗽 [Constitution Compass](https://constitution-compass.vercel.app) - Interactive civic education tool
-- 📄 [Markdown Resume Manager](https://github.com/emckenna/markdown-resume-manager) - Resume/cover letter automation
+- 📄 [VS Code Markdown Resume Manager](https://marketplace.visualstudio.com/items?itemName=EricMcKenna.markdown-resume-manager) - VS Code extension for resume/cover letter automation
 - 📊 [JobTrail](https://github.com/emckenna/jobtrail) - Rails 8 job application tracker with analytics *(Work in Progress)*
 
 ## Technology Stack
