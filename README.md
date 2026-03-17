@@ -1,17 +1,38 @@
 # Eric McKenna - Portfolio
 
-Professional portfolio website showcasing my experience as a Senior Software Engineer specializing in Ruby on Rails and full-stack development.
+Professional portfolio website showcasing my work as a Senior Software Engineer focused on scalable full-stack systems (Ruby on Rails + modern JavaScript) and technical leadership.
 
 🔗 **Live Site:** [emckenna.github.io](https://emckenna.github.io)
+
+## Resume
+
+- PDF: [resume/Eric_McKenna_Resume.pdf](resume/Eric_McKenna_Resume.pdf)
+- DOCX: [resume/Eric_McKenna_Resume.docx](resume/Eric_McKenna_Resume.docx)
+- Markdown (source): [resume/eric-mckenna-resume.md](resume/eric-mckenna-resume.md)
 
 ## About
 
 This portfolio site highlights:
-- 11+ years of Ruby on Rails expertise
-- Team leadership and mentoring experience
-- Technical skills across backend, frontend, testing, and infrastructure
-- Professional experience and project work
-- Contact information and resume downloads
+- Ruby on Rails applications and APIs for mission-critical systems
+- Team leadership, mentoring, and strong engineering practices (code review, estimation, sprint planning)
+- Full-stack work: Rails + Vue/JavaScript + HTML/CSS
+- Production systems work: performance, reliability, CI/CD, Docker/Kubernetes
+- Featured side projects, writing, and contact info
+
+## Professional Snapshot
+
+- Senior/Lead engineer building mission-critical Rails systems and mentoring teams
+- Led a 5-person Rails team and mentored 3 engineers (Optoro)
+- Built backend systems processing 90M+ transactions annually (Optoro)
+- Improved database/API performance by ~300% through systematic optimization
+- Consulting on architecture and cloud hosting strategy (Task Force VA; AWS → EKS)
+
+## Core Skills
+
+- **Backend:** Ruby on Rails, PostgreSQL/MySQL, Redis/Memcache, RESTful APIs
+- **Frontend:** Vue.js, JavaScript, HTML5, CSS3 (React: learning)
+- **Quality:** RSpec, Capybara, Jest, TDD, Git workflows
+- **Infra:** Docker, Kubernetes, CI/CD (GitLab CI, GitHub Actions), GCP
 
 ## Features
 
@@ -71,10 +92,11 @@ open index.html
 ## Contact
 
 - 📧 eric.mckenna@gmail.com
+- 📞 703-338-3722
 - 💼 [LinkedIn](https://linkedin.com/in/ericmckenna)
 - 🐙 [GitHub](https://github.com/emckenna)
 - 📍 Silver Spring, MD
 
 ## License
 
-© 2025 Eric McKenna. All rights reserved.
+© Eric McKenna. All rights reserved.
