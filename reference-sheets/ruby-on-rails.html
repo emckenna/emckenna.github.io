@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./assets/refsheet-base.css" />
+<link rel="stylesheet" href="./assets/refsheet-themes.css" />
+</head>
+<body data-theme="crisp">
+
+<header>
+  <h1>Ruby on Rails</h1>
+  <span class="badge">SE II Ref</span>
+  <div class="spacer"></div>
+  <div class="palettes">
+    <span>Theme</span>
+    <div class="swatch active" data-p="crisp"    title="Crisp"    onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="warm"     title="Warm"     onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="forest"   title="Forest"   onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="slate"    title="Slate"    onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="midnight" title="Midnight" onclick="setTheme(this)"></div>
+    <a class="header-link" href="./index.html" title="Back to index" aria-label="Back to index">↑</a>
+  </div>
+</header>
+
+<nav id="nav">
+  <button class="active" onclick="show('activerecord')">ActiveRecord</button>
+  <button onclick="show('routing')">Routing</button>
+  <button onclick="show('controllers')">Controllers</button>
+  <button onclick="show('api')">API & Serialization</button>
+  <button onclick="show('models')">Models & Validations</button>
+  <button onclick="show('misc')">Misc & Patterns</button>
+</nav>
+
+<!-- ACTIVERECORD -->
+<div class="section active" id="activerecord">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Finders</div>
+<pre><span class="cm"># Basic</span>
+User.<span class="fn">find</span>(<span class="st">1</span>)              <span class="cm"># raises if missing</span>
+User.<span class="fn">find_by</span>(email: <span class="st">'x'</span>)  <span class="cm"># nil if missing</span>
+User.<span class="fn">find_by!</span>(email: <span class="st">'x'</span>) <span class="cm"># raises if missing</span>
+User.<span class="fn">first</span> / User.<span class="fn">last</span>
+User.<span class="fn">all</span>                   <span class="cm"># relation, not array</span>
+
+<span class="cm"># Dynamic finders</span>
+User.<span class="fn">find_by_email</span>(<span class="st">'x'</span>)   <span class="cm"># deprecated but asked</span>
+
+<span class="cm"># Find or create</span>
+User.<span class="fn">find_or_create_by</span>(email: <span class="st">'x'</span>)
+User.<span class="fn">find_or_initialize_by</span>(email: <span class="st">'x'</span>)</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Querying</div>
+<pre><span class="cm"># Conditions</span>
+User.<span class="fn">where</span>(active: <span class="kw">true</span>)
+User.<span class="fn">where</span>(<span class="st">"age > ?"</span>, <span class="st">18</span>)       <span class="cm"># safe</span>
+User.<span class="fn">where</span>(<span class="st">"age > #{age}"</span>)       <span class="cm"># ⚠ SQL injection!</span>
+User.<span class="fn">where</span>.not(banned: <span class="kw">true</span>)
+User.<span class="fn">where</span>(role: [<span class="st">'admin'</span>, <span class="st">'mod'</span>]) <span class="cm"># IN</span>
+
+<span class="cm"># Order, limit, offset</span>
+User.<span class="fn">order</span>(<span class="st">'created_at DESC'</span>)
+User.<span class="fn">order</span>(created_at: :desc)
+User.<span class="fn">limit</span>(<span class="st">10</span>).<span class="fn">offset</span>(<span class="st">20</span>)
+
+<span class="cm"># Aggregates</span>
+User.<span class="fn">count</span> / .<span class="fn">sum</span>(:score) / .<span class="fn">average</span>(:age)
+User.<span class="fn">minimum</span>(:age) / .<span class="fn">maximum</span>(:age)</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Associations & Eager Loading</div>
+<pre><span class="cm"># N+1 killer</span>
+Post.<span class="fn">includes</span>(:author, :comments)
+Post.<span class="fn">eager_load</span>(:author)   <span class="cm"># LEFT OUTER JOIN</span>
+Post.<span class="fn">preload</span>(:author)      <span class="cm"># separate query</span>
+
+<span class="cm"># Joining (for filtering only)</span>
+Post.<span class="fn">joins</span>(:comments).<span class="fn">where</span>(comments: { approved: <span class="kw">true</span> })
+
+<span class="cm"># Nested includes</span>
+Post.<span class="fn">includes</span>(comments: :author)
+
+<span class="cm"># Association queries</span>
+user.posts.<span class="fn">where</span>(published: <span class="kw">true</span>)
+user.posts.<span class="fn">create</span>(title: <span class="st">'Hi'</span>)
+user.posts.<span class="fn">build</span>(title: <span class="st">'Hi'</span>)  <span class="cm"># unsaved</span></pre>
+    <div class="tip">⚠ includes loads data; joins filters only — don't swap them.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Scopes</div>
+<pre><span class="kw">class</span> Post &lt; ApplicationRecord
+  <span class="fn">scope</span> <span class="st">:published</span>, -&gt; { <span class="fn">where</span>(published: <span class="kw">true</span>) }
+  <span class="fn">scope</span> <span class="st">:recent</span>,    -&gt; { <span class="fn">order</span>(created_at: :desc) }
+  <span class="fn">scope</span> <span class="st">:by_author</span>, -&gt;(id) { <span class="fn">where</span>(author_id: id) }
+
+  <span class="cm"># Default scope (use sparingly)</span>
+  <span class="fn">default_scope</span> { <span class="fn">where</span>(deleted_at: <span class="kw">nil</span>) }
+<span class="kw">end</span>
+
+<span class="cm"># Chainable</span>
+Post.<span class="fn">published</span>.<span class="fn">recent</span>.<span class="fn">limit</span>(<span class="st">5</span>)
+Post.<span class="fn">by_author</span>(<span class="st">42</span>).<span class="fn">published</span>
+
+<span class="cm"># Unscope default</span>
+Post.<span class="fn">unscoped</span>.<span class="fn">where</span>(id: <span class="st">1</span>)</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Create / Update / Delete</div>
+<pre><span class="cm"># Create</span>
+User.<span class="fn">create</span>(name: <span class="st">'Eric'</span>)      <span class="cm"># save + return</span>
+User.<span class="fn">create!</span>(name: <span class="st">'Eric'</span>)     <span class="cm"># raises on invalid</span>
+user = User.<span class="fn">new</span>(name: <span class="st">'Eric'</span>)
+user.<span class="fn">save</span>                       <span class="cm"># true/false</span>
+user.<span class="fn">save!</span>                      <span class="cm"># raises</span>
+
+<span class="cm"># Update</span>
+user.<span class="fn">update</span>(name: <span class="st">'New'</span>)        <span class="cm"># runs callbacks</span>
+user.<span class="fn">update_column</span>(:name, <span class="st">'x'</span>) <span class="cm"># skips callbacks!</span>
+User.<span class="fn">update_all</span>(active: <span class="kw">false</span>) <span class="cm"># no callbacks</span>
+
+<span class="cm"># Delete</span>
+user.<span class="fn">destroy</span>                    <span class="cm"># runs callbacks</span>
+user.<span class="fn">delete</span>                     <span class="cm"># skips callbacks</span>
+User.<span class="fn">destroy_all</span>(active: <span class="kw">false</span>)
+User.<span class="fn">where</span>(active: <span class="kw">false</span>).<span class="fn">delete_all</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Transactions & Batching</div>
+<pre><span class="cm"># Transaction</span>
+ActiveRecord::Base.<span class="fn">transaction</span> <span class="kw">do</span>
+  account.<span class="fn">debit</span>(<span class="st">100</span>)
+  other.<span class="fn">credit</span>(<span class="st">100</span>)
+  <span class="kw">raise</span> ActiveRecord::Rollback <span class="cm"># silent rollback</span>
+<span class="kw">end</span>
+
+<span class="cm"># Batch processing (memory-safe)</span>
+User.<span class="fn">find_each</span>(batch_size: <span class="st">500</span>) <span class="kw">do</span> |user|
+  user.<span class="fn">do_something</span>
+<span class="kw">end</span>
+
+User.<span class="fn">find_in_batches</span>(batch_size: <span class="st">500</span>) <span class="kw">do</span> |batch|
+  <span class="fn">process</span>(batch)
+<span class="kw">end</span></pre>
+    <div class="tip">💡 find_each ignores order — don't chain .order()</div>
+  </div>
+</div>
+</div>
+
+<!-- ROUTING -->
+<div class="section" id="routing">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Resources & REST</div>
+<pre><span class="cm"># Full REST (7 routes)</span>
+<span class="fn">resources</span> <span class="st">:posts</span>
+
+<span class="cm"># Limit actions</span>
+<span class="fn">resources</span> <span class="st">:posts</span>, <span class="fn">only</span>: [<span class="st">:index</span>, <span class="st">:show</span>, <span class="st">:create</span>]
+<span class="fn">resources</span> <span class="st">:posts</span>, <span class="fn">except</span>: [<span class="st">:destroy</span>]
+
+<span class="cm"># Singular resource (no :id)</span>
+<span class="fn">resource</span>  <span class="st">:profile</span>  <span class="cm"># show/edit/update/destroy</span>
+
+<span class="cm"># Nested</span>
+<span class="fn">resources</span> <span class="st">:posts</span> <span class="kw">do</span>
+  <span class="fn">resources</span> <span class="st">:comments</span>, <span class="fn">only</span>: [<span class="st">:create</span>, <span class="st">:destroy</span>]
+<span class="kw">end</span>
+<span class="cm"># → /posts/:post_id/comments</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Extra Actions & Namespaces</div>
+<pre><span class="cm"># Member (has :id) vs Collection (no :id)</span>
+<span class="fn">resources</span> <span class="st">:posts</span> <span class="kw">do</span>
+  <span class="fn">member</span>     { <span class="fn">post</span> <span class="st">:publish</span> }  <span class="cm"># /posts/:id/publish</span>
+  <span class="fn">collection</span> { <span class="fn">get</span>  <span class="st">:search</span> }  <span class="cm"># /posts/search</span>
+<span class="kw">end</span>
+
+<span class="cm"># Namespace (module + path prefix)</span>
+<span class="fn">namespace</span> <span class="st">:api</span> <span class="kw">do</span>
+  <span class="fn">namespace</span> <span class="st">:v1</span> <span class="kw">do</span>
+    <span class="fn">resources</span> <span class="st">:users</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+<span class="cm"># → /api/v1/users → Api::V1::UsersController</span>
+
+<span class="cm"># Scope (path only, no module)</span>
+<span class="fn">scope</span> <span class="st">'/api/v1'</span> <span class="kw">do</span>
+  <span class="fn">resources</span> <span class="st">:users</span>
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Named Routes & Helpers</div>
+<pre><span class="cm"># Auto-generated path/url helpers</span>
+posts_path              <span class="cm"># /posts</span>
+post_path(<span class="st">@post</span>)        <span class="cm"># /posts/1</span>
+new_post_path           <span class="cm"># /posts/new</span>
+edit_post_path(<span class="st">@post</span>)   <span class="cm"># /posts/1/edit</span>
+posts_url               <span class="cm"># http://... full URL</span>
+
+<span class="cm"># Nested</span>
+post_comments_path(<span class="st">@post</span>)
+post_comment_path(<span class="st">@post</span>, <span class="st">@comment</span>)
+
+<span class="cm"># Custom named route</span>
+<span class="fn">get</span> <span class="st">'sign_in'</span>, <span class="fn">to</span>: <span class="st">'sessions#new'</span>, <span class="fn">as</span>: <span class="st">:login</span>
+<span class="cm"># → login_path</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Constraints & Concerns</div>
+<pre><span class="cm"># Constraints</span>
+<span class="fn">get</span> <span class="st">'posts/:id'</span>, <span class="fn">to</span>: <span class="st">'posts#show'</span>,
+  <span class="fn">constraints</span>: { id: <span class="st">/\d+/</span> }
+
+<span class="cm"># Route concern (DRY)</span>
+<span class="fn">concern</span> <span class="st">:commentable</span> <span class="kw">do</span>
+  <span class="fn">resources</span> <span class="st">:comments</span>
+<span class="kw">end</span>
+
+<span class="fn">resources</span> <span class="st">:posts</span>,    concerns: <span class="st">:commentable</span>
+<span class="fn">resources</span> <span class="st">:articles</span>, concerns: <span class="st">:commentable</span>
+
+<span class="cm"># Root & redirect</span>
+<span class="fn">root</span> <span class="st">'home#index'</span>
+<span class="fn">get</span> <span class="st">'/old'</span>, <span class="fn">to</span>: <span class="fn">redirect</span>(<span class="st">'/new'</span>)</pre>
+  </div>
+
+  <div class="card span2">
+    <div class="card-title">7 REST Routes at a Glance</div>
+    <table>
+      <tr><th>Verb</th><th>Path</th><th>Action</th><th>Helper</th><th>Use</th></tr>
+      <tr><td>GET</td><td>/posts</td><td>index</td><td><code>posts_path</code></td><td>List all</td></tr>
+      <tr><td>GET</td><td>/posts/new</td><td>new</td><td><code>new_post_path</code></td><td>New form</td></tr>
+      <tr><td>POST</td><td>/posts</td><td>create</td><td><code>posts_path</code></td><td>Create</td></tr>
+      <tr><td>GET</td><td>/posts/:id</td><td>show</td><td><code>post_path(@p)</code></td><td>Show one</td></tr>
+      <tr><td>GET</td><td>/posts/:id/edit</td><td>edit</td><td><code>edit_post_path(@p)</code></td><td>Edit form</td></tr>
+      <tr><td>PATCH/PUT</td><td>/posts/:id</td><td>update</td><td><code>post_path(@p)</code></td><td>Update</td></tr>
+      <tr><td>DELETE</td><td>/posts/:id</td><td>destroy</td><td><code>post_path(@p)</code></td><td>Delete</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- CONTROLLERS -->
+<div class="section" id="controllers">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Structure & Filters</div>
+<pre><span class="kw">class</span> PostsController &lt; ApplicationController
+  <span class="fn">before_action</span> <span class="st">:authenticate_user!</span>
+  <span class="fn">before_action</span> <span class="st">:set_post</span>, <span class="fn">only</span>: [<span class="st">:show</span>, <span class="st">:edit</span>, <span class="st">:update</span>, <span class="st">:destroy</span>]
+
+  <span class="kw">def</span> <span class="fn">index</span>
+    <span class="st">@posts</span> = Post.<span class="fn">all</span>
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">create</span>
+    <span class="st">@post</span> = Post.<span class="fn">new</span>(<span class="fn">post_params</span>)
+    <span class="kw">if</span> <span class="st">@post</span>.<span class="fn">save</span>
+      <span class="fn">redirect_to</span> <span class="st">@post</span>, notice: <span class="st">'Created!'</span>
+    <span class="kw">else</span>
+      <span class="fn">render</span> <span class="st">:new</span>, status: <span class="st">:unprocessable_entity</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  private
+  <span class="kw">def</span> <span class="fn">set_post</span>;    <span class="st">@post</span> = Post.<span class="fn">find</span>(params[<span class="st">:id</span>]); <span class="kw">end</span>
+  <span class="kw">def</span> <span class="fn">post_params</span>; params.<span class="fn">require</span>(<span class="st">:post</span>).<span class="fn">permit</span>(<span class="st">:title</span>, <span class="st">:body</span>); <span class="kw">end</span>
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Strong Params</div>
+<pre><span class="cm"># require + permit (whitelist)</span>
+params.<span class="fn">require</span>(<span class="st">:user</span>).<span class="fn">permit</span>(<span class="st">:name</span>, <span class="st">:email</span>)
+
+<span class="cm"># Nested attributes</span>
+params.<span class="fn">require</span>(<span class="st">:post</span>).<span class="fn">permit</span>(
+  <span class="st">:title</span>,
+  tags: [],
+  comments_attributes: [<span class="st">:body</span>, <span class="st">:_destroy</span>]
+)
+
+<span class="cm"># Optional require</span>
+params.<span class="fn">permit</span>(<span class="st">:search</span>)
+
+<span class="cm"># ⚠ Never pass raw params to AR:</span>
+<span class="cm"># User.new(params[:user])  ← mass assignment!</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Filter Types</div>
+<pre><span class="fn">before_action</span>              <span class="cm"># before action runs</span>
+<span class="fn">after_action</span>               <span class="cm"># after (even on error)</span>
+<span class="fn">around_action</span>              <span class="cm"># wraps with yield</span>
+<span class="fn">skip_before_action</span> <span class="st">:auth</span>, <span class="fn">only</span>: <span class="st">:index</span>
+
+<span class="cm"># Halting: render/redirect stops chain</span>
+<span class="kw">def</span> <span class="fn">check_admin</span>
+  <span class="fn">redirect_to</span> root_path <span class="kw">unless</span> current_user.<span class="fn">admin?</span>
+<span class="kw">end</span>
+
+<span class="cm"># Respond to format</span>
+<span class="fn">respond_to</span> <span class="kw">do</span> |format|
+  format.<span class="fn">html</span>
+  format.<span class="fn">json</span> { <span class="fn">render</span> json: <span class="st">@post</span> }
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Render & Redirect</div>
+<pre><span class="cm"># Render (same request)</span>
+<span class="fn">render</span> <span class="st">:new</span>
+<span class="fn">render</span> json: { error: <span class="st">'bad'</span> }, status: <span class="st">:unprocessable_entity</span>
+<span class="fn">render</span> plain: <span class="st">'OK'</span>
+<span class="fn">head</span> <span class="st">:no_content</span>           <span class="cm"># 204, no body</span>
+
+<span class="cm"># Redirect (new request)</span>
+<span class="fn">redirect_to</span> posts_path
+<span class="fn">redirect_to</span> <span class="st">@post</span>
+<span class="fn">redirect_to</span> root_path, notice: <span class="st">'Done'</span>
+<span class="fn">redirect_back</span> fallback_location: root_path</pre>
+    <div class="tip">⚠ render + redirect in same action = DoubleRenderError. Use return after redirect.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">params / session / flash</div>
+<pre><span class="cm"># params</span>
+params[<span class="st">:id</span>]            <span class="cm"># route segment</span>
+params[<span class="st">:q</span>]             <span class="cm"># query string</span>
+params[<span class="st">:post</span>][<span class="st">:title</span>]  <span class="cm"># form data</span>
+
+<span class="cm"># session (cookie-backed)</span>
+session[<span class="st">:user_id</span>] = user.id
+session.<span class="fn">delete</span>(<span class="st">:user_id</span>)
+
+<span class="cm"># flash (persists one request)</span>
+flash[<span class="st">:notice</span>] = <span class="st">'Saved!'</span>
+flash[<span class="st">:alert</span>]  = <span class="st">'Error!'</span>
+flash.<span class="fn">now</span>[<span class="st">:alert</span>] = <span class="st">'Now only'</span> <span class="cm"># current req only</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">rescue_from & HTTP Status</div>
+<pre><span class="fn">rescue_from</span> ActiveRecord::RecordNotFound,
+  with: <span class="st">:not_found</span>
+<span class="fn">rescue_from</span> Pundit::NotAuthorized <span class="kw">do</span>
+  <span class="fn">render</span> json: { error: <span class="st">'Forbidden'</span> }, status: <span class="st">403</span>
+<span class="kw">end</span>
+
+<span class="kw">def</span> <span class="fn">not_found</span>
+  <span class="fn">render</span> json: { error: <span class="st">'Not found'</span> }, status: <span class="st">404</span>
+<span class="kw">end</span>
+
+<span class="cm"># Common status symbols</span>
+<span class="cm"># :ok 200  :created 201  :no_content 204</span>
+<span class="cm"># :bad_request 400  :unauthorized 401</span>
+<span class="cm"># :forbidden 403  :not_found 404</span>
+<span class="cm"># :unprocessable_entity 422</span></pre>
+  </div>
+</div>
+</div>
+
+<!-- API & SERIALIZATION -->
+<div class="section" id="api">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">API Controller Setup</div>
+<pre><span class="kw">class</span> Api::V1::BaseController &lt; ActionController::API
+  <span class="fn">before_action</span> <span class="st">:authenticate!</span>
+  <span class="fn">rescue_from</span> ActiveRecord::RecordNotFound <span class="kw">do</span>
+    <span class="fn">render</span> json: { error: <span class="st">'Not found'</span> }, status: <span class="st">404</span>
+  <span class="kw">end</span>
+
+  private
+  <span class="kw">def</span> <span class="fn">authenticate!</span>
+    token = request.headers[<span class="st">'Authorization'</span>]
+              &amp;.<span class="fn">split</span>(<span class="st">' '</span>)&amp;.<span class="fn">last</span>
+    <span class="st">@current_user</span> = User.<span class="fn">find_by!</span>(token: token)
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># ActionController::API = no view layer</span>
+<span class="cm"># Use ::Base if you need sessions/views</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">render json Patterns</div>
+<pre><span class="cm"># Simple</span>
+<span class="fn">render</span> json: <span class="st">@user</span>
+<span class="fn">render</span> json: <span class="st">@user</span>, status: <span class="st">:created</span>
+
+<span class="cm"># Only / except</span>
+<span class="fn">render</span> json: <span class="st">@user</span>, only: [<span class="st">:id</span>, <span class="st">:name</span>]
+<span class="fn">render</span> json: <span class="st">@user</span>, except: [<span class="st">:password_digest</span>]
+
+<span class="cm"># Include associations</span>
+<span class="fn">render</span> json: <span class="st">@post</span>,
+  include: { comments: { only: [<span class="st">:id</span>, <span class="st">:body</span>] } }
+
+<span class="cm"># Envelope + meta</span>
+<span class="fn">render</span> json: {
+  data: <span class="st">@users</span>,
+  meta: { total: <span class="st">@users</span>.<span class="fn">count</span>, page: params[<span class="st">:page</span>] }
+}</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Common HTTP Status Codes</div>
+    <table>
+      <tr><th>Code</th><th>Rails</th><th>Meaning</th><th>Use</th></tr>
+      <tr><td>200</td><td><code>:ok</code></td><td>OK</td><td>GET success / generic success</td></tr>
+      <tr><td>201</td><td><code>:created</code></td><td>Created</td><td>POST created a resource</td></tr>
+      <tr><td>204</td><td><code>:no_content</code></td><td>No Content</td><td>Success with empty body (DELETE, PUT)</td></tr>
+      <tr><td>400</td><td><code>:bad_request</code></td><td>Bad Request</td><td>Malformed params / invalid JSON</td></tr>
+      <tr><td>401</td><td><code>:unauthorized</code></td><td>Unauthorized</td><td>Missing/invalid auth credentials</td></tr>
+      <tr><td>403</td><td><code>:forbidden</code></td><td>Forbidden</td><td>Authenticated but not allowed</td></tr>
+      <tr><td>404</td><td><code>:not_found</code></td><td>Not Found</td><td>Resource missing / wrong ID</td></tr>
+      <tr><td>409</td><td><code>:conflict</code></td><td>Conflict</td><td>State conflict (e.g., duplicate, versioning)</td></tr>
+      <tr><td>422</td><td><code>:unprocessable_entity</code></td><td>Unprocessable Entity</td><td>Validation failures</td></tr>
+      <tr><td>429</td><td><code>:too_many_requests</code></td><td>Too Many Requests</td><td>Rate limiting</td></tr>
+      <tr><td>500</td><td><code>:internal_server_error</code></td><td>Server Error</td><td>Unexpected exception</td></tr>
+    </table>
+    <div class="tip">If you can’t decide: use <code>400</code> for malformed input, <code>422</code> for valid input that fails validations.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">as_json / to_json</div>
+<pre><span class="kw">def</span> <span class="fn">as_json</span>(options = {})
+  <span class="kw">super</span>(options.<span class="fn">merge</span>(
+    only: [<span class="st">:id</span>, <span class="st">:name</span>, <span class="st">:email</span>],
+    methods: [<span class="st">:full_name</span>],
+    include: { role: { only: <span class="st">:name</span> } }
+  ))
+<span class="kw">end</span>
+
+<span class="cm"># methods: adds virtual attr to output</span>
+<span class="kw">def</span> <span class="fn">full_name</span>
+  <span class="st">"#{first_name} #{last_name}"</span>
+<span class="kw">end</span>
+
+<span class="cm"># to_json calls as_json under the hood</span>
+<span class="cm"># render json: @obj calls as_json auto</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">AMS & Jbuilder</div>
+<pre><span class="cm"># AMS (app/serializers/user_serializer.rb)</span>
+<span class="kw">class</span> UserSerializer &lt; ActiveModel::Serializer
+  attributes <span class="st">:id</span>, <span class="st">:name</span>, <span class="st">:email</span>
+  has_many <span class="st">:posts</span>
+
+  <span class="kw">def</span> <span class="fn">email</span>
+    object.email.<span class="fn">downcase</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+<span class="fn">render</span> json: <span class="st">@user</span>  <span class="cm"># auto-uses serializer</span>
+
+<span class="cm"># Jbuilder (show.json.jbuilder)</span>
+json.(<span class="st">@user</span>, <span class="st">:id</span>, <span class="st">:name</span>)
+json.<span class="fn">posts</span>(<span class="st">@user</span>.posts) <span class="kw">do</span> |post|
+  json.(post, <span class="st">:id</span>, <span class="st">:title</span>)
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pagination & Headers</div>
+<pre><span class="cm"># Kaminari</span>
+<span class="st">@posts</span> = Post.<span class="fn">page</span>(params[<span class="st">:page</span>]).<span class="fn">per</span>(<span class="st">25</span>)
+<span class="st">@posts</span>.<span class="fn">total_count</span>  /  <span class="st">@posts</span>.<span class="fn">current_page</span>
+
+<span class="cm"># will_paginate</span>
+<span class="st">@posts</span> = Post.<span class="fn">paginate</span>(page: params[<span class="st">:page</span>], per_page: <span class="st">25</span>)
+
+<span class="cm"># Response headers</span>
+response.headers[<span class="st">'X-Total-Count'</span>] = <span class="st">@posts</span>.<span class="fn">total_count</span>.<span class="fn">to_s</span>
+response.headers[<span class="st">'X-Page'</span>]        = params[<span class="st">:page</span>]
+
+<span class="cm"># Content</span>
+request.<span class="fn">format</span>  <span class="cm"># :html / :json / :xml</span>
+request.<span class="fn">xhr?</span>    <span class="cm"># AJAX?</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">CORS & Versioning</div>
+<pre><span class="cm"># rack-cors (config/initializers/cors.rb)</span>
+Rails.application.config.middleware
+  .<span class="fn">insert_before</span> <span class="st">0</span>, Rack::Cors <span class="kw">do</span>
+  <span class="fn">allow</span> <span class="kw">do</span>
+    origins <span class="st">'*'</span>
+    resource <span class="st">'*'</span>, headers: :any,
+      methods: [<span class="st">:get</span>, <span class="st">:post</span>, <span class="st">:patch</span>, <span class="st">:delete</span>]
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># Versioning strategies</span>
+<span class="cm"># 1. URL:      /api/v1/posts         ← most common</span>
+<span class="cm"># 2. Header:   Accept: application/vnd.v1+json</span>
+<span class="cm"># 3. Subdomain: api.v1.myapp.com</span></pre>
+  </div>
+</div>
+</div>
+
+<!-- MODELS & VALIDATIONS -->
+<div class="section" id="models">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Validations</div>
+<pre><span class="kw">class</span> User &lt; ApplicationRecord
+  <span class="fn">validates</span> <span class="st">:name</span>,  presence: <span class="kw">true</span>,
+                     length: { minimum: <span class="st">2</span>, maximum: <span class="st">50</span> }
+  <span class="fn">validates</span> <span class="st">:email</span>, presence: <span class="kw">true</span>,
+                     uniqueness: { case_sensitive: <span class="kw">false</span> },
+                     format: { with: URI::MailTo::EMAIL_REGEXP }
+  <span class="fn">validates</span> <span class="st">:age</span>,   numericality: { greater_than: <span class="st">0</span> }
+  <span class="fn">validates</span> <span class="st">:role</span>,  inclusion: { in: <span class="st">%w[admin user guest]</span> }
+  <span class="fn">validates</span> <span class="st">:bio</span>,   length: { maximum: <span class="st">500</span> }, allow_blank: <span class="kw">true</span>
+  <span class="fn">validate</span>  <span class="st">:custom_check</span>
+
+  <span class="kw">def</span> <span class="fn">custom_check</span>
+    errors.<span class="fn">add</span>(<span class="st">:base</span>, <span class="st">'bad'</span>) <span class="kw">if</span> bad?
+  <span class="kw">end</span>
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Associations</div>
+<pre><span class="kw">class</span> Post &lt; ApplicationRecord
+  <span class="fn">belongs_to</span> <span class="st">:user</span>
+  <span class="fn">belongs_to</span> <span class="st">:category</span>, optional: <span class="kw">true</span>
+  <span class="fn">has_many</span>   <span class="st">:comments</span>,   dependent: <span class="st">:destroy</span>
+  <span class="fn">has_many</span>   <span class="st">:commenters</span>, through: <span class="st">:comments</span>, source: <span class="st">:user</span>
+  <span class="fn">has_one</span>    <span class="st">:image</span>,       dependent: <span class="st">:destroy</span>
+  <span class="fn">has_many</span>   <span class="st">:tags</span>,        through: <span class="st">:post_tags</span>
+<span class="kw">end</span>
+
+<span class="cm"># dependent: options</span>
+<span class="cm"># :destroy      → calls destroy (callbacks run)</span>
+<span class="cm"># :delete_all   → SQL DELETE, no callbacks</span>
+<span class="cm"># :nullify      → sets FK to null</span>
+<span class="cm"># :restrict_with_error → blocks destroy</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Callbacks</div>
+<pre>before_validation / after_validation
+before_save        <span class="cm"># create AND update</span>
+before_create / after_create
+after_save
+before_update / after_update
+before_destroy / after_destroy
+after_commit       <span class="cm"># after DB tx commits ← use for jobs</span>
+after_rollback
+
+<span class="cm"># Examples</span>
+<span class="fn">before_save</span>  <span class="st">:normalize_email</span>
+<span class="fn">after_create</span> <span class="st">:send_welcome_email</span>
+<span class="fn">after_commit</span> <span class="st">:enqueue_job</span>, on: <span class="st">:create</span></pre>
+    <div class="tip">💡 Use after_commit for jobs/mailers — only fires if transaction succeeds.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Migrations</div>
+<pre><span class="cm"># Generate</span>
+rails g migration AddSlugToPosts slug:string:uniq
+rails g migration CreatePosts title:string user:references
+
+<span class="cm"># Methods</span>
+<span class="fn">add_column</span>    <span class="st">:posts</span>, <span class="st">:slug</span>, <span class="st">:string</span>, null: <span class="kw">false</span>, default: <span class="st">''</span>
+<span class="fn">remove_column</span> <span class="st">:posts</span>, <span class="st">:old_field</span>
+<span class="fn">rename_column</span> <span class="st">:posts</span>, <span class="st">:old</span>, <span class="st">:new_name</span>
+<span class="fn">change_column</span> <span class="st">:posts</span>, <span class="st">:views</span>, <span class="st">:bigint</span>
+<span class="fn">add_index</span>     <span class="st">:users</span>, <span class="st">:email</span>, unique: <span class="kw">true</span>
+<span class="fn">add_reference</span> <span class="st">:posts</span>, <span class="st">:author</span>,
+  foreign_key: { to_table: <span class="st">:users</span> }
+
+<span class="cm"># Types: string text integer bigint float</span>
+<span class="cm">#        decimal boolean datetime date jsonb</span></pre>
+  </div>
+
+  <div class="card span2">
+    <div class="card-title">Errors & Checking Validity</div>
+<pre><span class="cm"># After save attempt</span>
+user.<span class="fn">valid?</span>                <span class="cm"># runs validations, returns bool</span>
+user.<span class="fn">invalid?</span>
+user.errors.<span class="fn">full_messages</span>  <span class="cm"># ["Name can't be blank"]</span>
+user.errors[<span class="st">:email</span>]        <span class="cm"># ["is invalid"]</span>
+user.errors.<span class="fn">any?</span>  /  user.errors.<span class="fn">count</span>
+
+<span class="cm"># In controller — respond after failed save</span>
+<span class="kw">if</span> <span class="st">@user</span>.<span class="fn">save</span>
+  <span class="fn">render</span> json: <span class="st">@user</span>, status: <span class="st">:created</span>
+<span class="kw">else</span>
+  <span class="fn">render</span> json: { errors: <span class="st">@user</span>.errors.<span class="fn">full_messages</span> },
+         status: <span class="st">:unprocessable_entity</span>
+<span class="kw">end</span></pre>
+  </div>
+</div>
+</div>
+
+<!-- MISC & PATTERNS -->
+<div class="section" id="misc">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Service Objects</div>
+<pre><span class="kw">class</span> CreatePost
+  <span class="kw">def</span> <span class="fn">initialize</span>(user:, params:)
+    <span class="st">@user</span>, <span class="st">@params</span> = user, params
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">call</span>
+    post = <span class="st">@user</span>.posts.<span class="fn">build</span>(<span class="st">@params</span>)
+    post.<span class="fn">save!</span>
+    NotifyJob.<span class="fn">perform_later</span>(post)
+    post
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># In controller</span>
+<span class="st">@post</span> = CreatePost.<span class="fn">new</span>(
+  user: current_user,
+  params: post_params
+).<span class="fn">call</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Active Job</div>
+<pre><span class="kw">class</span> WelcomeEmailJob &lt; ApplicationJob
+  <span class="fn">queue_as</span> <span class="st">:default</span>
+
+  <span class="kw">def</span> <span class="fn">perform</span>(user_id)
+    user = User.<span class="fn">find</span>(user_id)
+    UserMailer.<span class="fn">welcome</span>(user).<span class="fn">deliver_now</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># Enqueue</span>
+WelcomeEmailJob.<span class="fn">perform_later</span>(user.id)
+WelcomeEmailJob.<span class="fn">set</span>(wait: <span class="st">5</span>.minutes)
+             .<span class="fn">perform_later</span>(user.id)
+
+<span class="cm"># ⚠ Pass IDs not objects</span>
+<span class="cm"># Backends: Sidekiq, Delayed::Job, Resque</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Caching</div>
+<pre><span class="cm"># Low-level</span>
+Rails.cache.<span class="fn">fetch</span>(<span class="st">"user/#{id}/stats"</span>, expires_in: <span class="st">12</span>.hours) <span class="kw">do</span>
+  User.<span class="fn">find</span>(id).<span class="fn">compute_stats</span>
+<span class="kw">end</span>
+Rails.cache.<span class="fn">write</span>(<span class="st">'key'</span>, val)
+Rails.cache.<span class="fn">read</span>(<span class="st">'key'</span>)
+Rails.cache.<span class="fn">delete</span>(<span class="st">'key'</span>)
+
+<span class="cm"># HTTP caching</span>
+<span class="fn">expires_in</span> <span class="st">1</span>.hour, public: <span class="kw">true</span>
+<span class="fn">fresh_when</span> <span class="st">@post</span>   <span class="cm"># sets ETag + Last-Modified</span>
+<span class="fn">stale?</span>(<span class="st">@post</span>)       <span class="cm"># check & set headers</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Concerns</div>
+<pre><span class="kw">module</span> Trackable
+  <span class="fn">extend</span> ActiveSupport::Concern
+
+  <span class="fn">included</span> <span class="kw">do</span>
+    <span class="fn">before_create</span> <span class="st">:set_uuid</span>
+    <span class="fn">scope</span> <span class="st">:recent</span>, -&gt; { <span class="fn">order</span>(created_at: :desc) }
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">set_uuid</span>
+    <span class="kw">self</span>.uuid = SecureRandom.<span class="fn">uuid</span>
+  <span class="kw">end</span>
+
+  <span class="fn">class_methods</span> <span class="kw">do</span>
+    <span class="kw">def</span> <span class="fn">find_by_uuid</span>(uuid) = <span class="fn">find_by!</span>(uuid: uuid)
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="kw">class</span> Post &lt; ApplicationRecord
+  <span class="fn">include</span> Trackable
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ruby Idioms</div>
+<pre><span class="cm"># Safe navigation</span>
+user&amp;.profile&amp;.avatar_url
+
+<span class="cm"># Memoize</span>
+<span class="st">@result</span> ||= expensive_call
+
+<span class="cm"># Presence / blank</span>
+<span class="st">"  "</span>.<span class="fn">blank?</span>    <span class="cm"># true (whitespace = blank)</span>
+<span class="st">""</span>.<span class="fn">present?</span>   <span class="cm"># false</span>
+<span class="kw">nil</span>.<span class="fn">presence</span>  <span class="cm"># nil  (returns nil if blank)</span>
+<span class="st">"x"</span>.<span class="fn">presence</span>  <span class="cm"># "x"</span>
+
+<span class="cm"># Shortcuts</span>
+[<span class="st">1</span>,<span class="st">2</span>,<span class="st">3</span>].<span class="fn">map</span>(&:to_s)     <span class="cm"># symbol to proc</span>
+<span class="st">%w[foo bar baz]</span>          <span class="cm"># word array</span>
+<span class="st">%i[foo bar baz]</span>          <span class="cm"># symbol array</span>
+hash.<span class="fn">fetch</span>(<span class="st">:key</span>, default)</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Environment & Config</div>
+<pre><span class="cm"># Env checks</span>
+Rails.<span class="fn">env</span>.<span class="fn">production?</span>
+Rails.<span class="fn">env</span>.<span class="fn">development?</span>
+Rails.<span class="fn">env</span>.<span class="fn">test?</span>
+
+<span class="cm"># Credentials (Rails 5.2+)</span>
+Rails.application.credentials.secret_key
+Rails.application.credentials.<span class="fn">dig</span>(<span class="st">:aws</span>, <span class="st">:key</span>)
+
+<span class="cm"># ENV vars</span>
+ENV.<span class="fn">fetch</span>(<span class="st">'DATABASE_URL'</span>)        <span class="cm"># raises if missing</span>
+ENV.<span class="fn">fetch</span>(<span class="st">'PORT'</span>, <span class="st">'3000'</span>)       <span class="cm"># with default</span>
+
+<span class="cm"># Route helpers outside views</span>
+<span class="fn">include</span> Rails.application.routes.<span class="fn">url_helpers</span></pre>
+  </div>
+</div>
+</div>
+
+<script src="./assets/refsheet.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+/* Shared theme variables + swatch gradients (used by Ruby sheets + landing page) */
+
+body[data-theme="crisp"] {
+  --bg: #f0eff8; --surface: #ffffff; --border: #c8c5e0; --text: #0f0e1a; --muted: #5a5675;
+  --accent: #c0392b; --code-bg: #e8e6f5; --keyword: #b5000d; --type: #1252b3;
+  --string: #136b35; --comment: #7a7590; --fn: #6a24b8;
+  --tab-active-bg: #0f0e1a; --tab-active-fg: #fff; --tip-bg: #fff8ee; --tip-border: #d48a00;
+}
+body[data-theme="warm"] {
+  --bg: #faf6f0; --surface: #fffcf8; --border: #d9ccb8; --text: #1c1409; --muted: #6b5a40;
+  --accent: #b84a00; --code-bg: #f2ece1; --keyword: #a83200; --type: #1a5c9e;
+  --string: #2d7a2d; --comment: #8a7660; --fn: #7a3090;
+  --tab-active-bg: #1c1409; --tab-active-fg: #fff; --tip-bg: #fff8ee; --tip-border: #c07800;
+}
+body[data-theme="slate"] {
+  --bg: #1a1d26; --surface: #22263a; --border: #353a52; --text: #e2e6f0; --muted: #8891b0;
+  --accent: #e05c4a; --code-bg: #1d2030; --keyword: #ff7a68; --type: #60b0ff;
+  --string: #68d68a; --comment: #6673a0; --fn: #c88cff;
+  --tab-active-bg: #e2e6f0; --tab-active-fg: #1a1d26; --tip-bg: #2a2d3e; --tip-border: #c07800;
+}
+body[data-theme="forest"] {
+  --bg: #f0f5ee; --surface: #ffffff; --border: #bdd1b5; --text: #0e1a0c; --muted: #4a6644;
+  --accent: #2d7a2d; --code-bg: #e5f0e0; --keyword: #a83200; --type: #1a5c7a;
+  --string: #1a6b1a; --comment: #6a8a64; --fn: #6a24a0;
+  --tab-active-bg: #0e1a0c; --tab-active-fg: #fff; --tip-bg: #fffaee; --tip-border: #c07800;
+}
+body[data-theme="midnight"] {
+  --bg: #0d0f18; --surface: #13161f; --border: #252840; --text: #d8ddf0; --muted: #7880a8;
+  --accent: #7c8eff; --code-bg: #0a0c14; --keyword: #ff7eb6; --type: #79d4ff;
+  --string: #73efa0; --comment: #50597a; --fn: #d4a0ff;
+  --tab-active-bg: #7c8eff; --tab-active-fg: #0d0f18; --tip-bg: #141722; --tip-border: #8a7000;
+}
+
+.swatch[data-p="crisp"]    { background: linear-gradient(135deg, #f0eff8 50%, #c0392b 50%); }
+.swatch[data-p="warm"]     { background: linear-gradient(135deg, #faf6f0 50%, #b84a00 50%); }
+.swatch[data-p="slate"]    { background: linear-gradient(135deg, #1a1d26 50%, #e05c4a 50%); }
+.swatch[data-p="forest"]   { background: linear-gradient(135deg, #f0f5ee 50%, #2d7a2d 50%); }
+.swatch[data-p="midnight"] { background: linear-gradient(135deg, #0d0f18 50%, #7c8eff 50%); }

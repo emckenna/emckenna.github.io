@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./assets/refsheet-base.css" />
+<link rel="stylesheet" href="./assets/refsheet-themes.css" />
+<title>Reference Sheets</title>
+</head>
+<body data-theme="crisp">
+
+<header>
+  <h1>Reference Sheets</h1>
+  <span class="badge">Quick Ref</span>
+  <div class="spacer"></div>
+  <div class="palettes">
+    <span>Theme</span>
+    <div class="swatch active" data-p="crisp" title="Crisp" onclick="setTheme(this)"></div>
+    <div class="swatch" data-p="warm" title="Warm" onclick="setTheme(this)"></div>
+    <div class="swatch" data-p="forest" title="Forest" onclick="setTheme(this)"></div>
+    <div class="swatch" data-p="slate" title="Slate" onclick="setTheme(this)"></div>
+    <div class="swatch" data-p="midnight" title="Midnight" onclick="setTheme(this)"></div>
+  </div>
+</header>
+
+<div class="grid two-col">
+  <div class="card">
+    <div class="card-title"><a href="./react-ts.html">React + TypeScript</a></div>
+    <div class="tip">Hooks, components, patterns, types, perf.</div>
+  </div>
+  <div class="card">
+    <div class="card-title"><a href="./ruby-on-rails.html">Ruby on Rails</a></div>
+    <div class="tip">Rails quick ref: models, migrations, controllers, queries.</div>
+  </div>
+  <div class="card">
+    <div class="card-title"><a href="./ruby-rspec.html">Ruby + RSpec</a></div>
+    <div class="tip">Ruby language + RSpec testing patterns.</div>
+  </div>
+</div>
+
+<script src="./assets/refsheet.js"></script>
+</body>
+</html>

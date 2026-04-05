@@ -1,0 +1,166 @@
+/* Shared layout/styles for docs/reference-sheets/*.html */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.45;
+  padding: 12px;
+  min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+  flex-wrap: wrap;
+}
+
+header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 7px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.spacer { flex: 1; }
+
+/* Links (used by landing page) */
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Palette picker */
+.palettes { display: flex; gap: 5px; align-items: center; }
+.palettes span {
+  font-size: 10px;
+  color: var(--muted);
+  margin-right: 3px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.palettes .header-link {
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+.palettes .header-link:hover { border-color: var(--text); }
+.palettes .header-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s, border-color 0.15s;
+}
+.swatch:hover { transform: scale(1.15); }
+.swatch.active { border-color: var(--text); }
+
+nav { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+nav button {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.12s;
+}
+nav button.active {
+  background: var(--tab-active-bg);
+  color: var(--tab-active-fg);
+  border-color: var(--tab-active-bg);
+}
+nav button:hover:not(.active) { border-color: var(--text); color: var(--text); }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.grid.two-col { grid-template-columns: repeat(2, 1fr); }
+.grid.four-col { grid-template-columns: repeat(4, 1fr); }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; }
+.card.span2 { grid-column: span 2; }
+.card.span3 { grid-column: span 3; }
+
+.card-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+pre, code { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.6; }
+pre {
+  background: var(--code-bg);
+  border-radius: 3px;
+  padding: 6px 8px;
+  overflow-x: auto;
+  white-space: pre;
+  margin-bottom: 6px;
+}
+pre:last-child { margin-bottom: 0; }
+
+.kw { color: var(--keyword); font-weight: 600; }
+.ty { color: var(--type); }
+.st { color: var(--string); }
+.cm { color: var(--comment); font-style: italic; }
+.fn { color: var(--fn); }
+
+table { width: 100%; border-collapse: collapse; font-size: 11px; }
+th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  padding: 3px 5px;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 3px 5px; border-bottom: 1px solid var(--border); vertical-align: top; opacity: 0.9; }
+td code { background: var(--code-bg); padding: 1px 4px; border-radius: 2px; font-size: 10px; }
+tr:last-child td { border-bottom: none; }
+
+.tip {
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--tip-bg);
+  border-left: 2px solid var(--tip-border);
+  padding: 4px 7px;
+  border-radius: 0 3px 3px 0;
+  margin-top: 5px;
+}
+
+.section { display: none; }
+.section.active { display: block; }

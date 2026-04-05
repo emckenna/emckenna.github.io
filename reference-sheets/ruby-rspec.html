@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./assets/refsheet-base.css" />
+<link rel="stylesheet" href="./assets/refsheet-themes.css" />
+</head>
+<body data-theme="crisp">
+
+<header>
+  <h1>Ruby Language</h1>
+  <span class="badge">SE II Ref</span>
+  <div class="spacer"></div>
+  <div class="palettes">
+    <span>Theme</span>
+    <div class="swatch active" data-p="crisp"    title="Crisp"    onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="warm"     title="Warm"     onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="forest"   title="Forest"   onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="slate"    title="Slate"    onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="midnight" title="Midnight" onclick="setTheme(this)"></div>
+    <a class="header-link" href="./index.html" title="Back to index" aria-label="Back to index">↑</a>
+  </div>
+</header>
+
+<nav id="nav">
+  <button class="active" onclick="show('oop')">OOP & Classes</button>
+  <button onclick="show('collections')">Collections</button>
+  <button onclick="show('blocks')">Blocks, Procs & Lambdas</button>
+  <button onclick="show('strings')">Strings & Symbols</button>
+  <button onclick="show('modules')">Modules & Mixins</button>
+  <button onclick="show('misc')">Misc & Gotchas</button>
+  <button onclick="show('rspec')">RSpec</button>
+</nav>
+
+<!-- OOP & CLASSES -->
+<div class="section active" id="oop">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Class Basics</div>
+<pre><span class="kw">class</span> Animal
+  attr_accessor <span class="st">:name</span>         <span class="cm"># get + set</span>
+  attr_reader   <span class="st">:species</span>      <span class="cm"># get only</span>
+  attr_writer   <span class="st">:age</span>          <span class="cm"># set only</span>
+
+  <span class="kw">def</span> <span class="fn">initialize</span>(name, species)
+    <span class="st">@name</span>    = name
+    <span class="st">@species</span> = species
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">to_s</span>
+    <span class="st">"#{@name} (#{@species})"</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+a = Animal.<span class="fn">new</span>(<span class="st">'Rex'</span>, <span class="st">'Dog'</span>)
+a.name            <span class="cm"># 'Rex'</span>
+a.name = <span class="st">'Max'</span>   <span class="cm"># setter</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Inheritance</div>
+<pre><span class="kw">class</span> Dog &lt; Animal
+  <span class="kw">def</span> <span class="fn">initialize</span>(name)
+    <span class="kw">super</span>(name, <span class="st">'Canine'</span>)
+    <span class="st">@tricks</span> = []
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">to_s</span>
+    <span class="kw">super</span> + <span class="st">" [dog]"</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+dog = Dog.<span class="fn">new</span>(<span class="st">'Rex'</span>)
+dog.<span class="fn">is_a?</span>(Dog)     <span class="cm"># true</span>
+dog.<span class="fn">is_a?</span>(Animal)  <span class="cm"># true</span>
+dog.<span class="fn">instance_of?</span>(Dog)    <span class="cm"># true (exact class)</span>
+dog.<span class="fn">instance_of?</span>(Animal) <span class="cm"># false</span>
+dog.<span class="fn">class</span>          <span class="cm"># Dog</span>
+Dog.<span class="fn">superclass</span>     <span class="cm"># Animal</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Class Methods & Variables</div>
+<pre><span class="kw">class</span> Counter
+  <span class="st">@@count</span> = <span class="st">0</span>             <span class="cm"># class variable (shared!)</span>
+
+  <span class="kw">def</span> <span class="fn">initialize</span>
+    <span class="st">@@count</span> += <span class="st">1</span>
+  <span class="kw">end</span>
+
+  <span class="kw">def self</span>.<span class="fn">count</span>
+    <span class="st">@@count</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+Counter.<span class="fn">new</span>; Counter.<span class="fn">new</span>
+Counter.<span class="fn">count</span>     <span class="cm"># 2</span>
+
+<span class="cm"># class << self (multiple class methods)</span>
+<span class="kw">class</span> Foo
+  <span class="kw">class</span> &lt;&lt; <span class="kw">self</span>
+    <span class="kw">def</span> <span class="fn">bar</span>; <span class="st">'bar'</span>; <span class="kw">end</span>
+    <span class="kw">def</span> <span class="fn">baz</span>; <span class="st">'baz'</span>; <span class="kw">end</span>
+  <span class="kw">end</span>
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Access Control</div>
+<pre><span class="kw">class</span> Person
+  <span class="kw">def</span> <span class="fn">greet</span>; <span class="st">"Hi, #{full_name}"</span>; <span class="kw">end</span>  <span class="cm"># public</span>
+
+  protected
+  <span class="kw">def</span> <span class="fn">compare</span>(other)  <span class="cm"># same class/subclass only</span>
+    name == other.name
+  <span class="kw">end</span>
+
+  private
+  <span class="kw">def</span> <span class="fn">full_name</span>       <span class="cm"># no explicit receiver</span>
+    <span class="st">"#{first} #{last}"</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># Bypass private in tests:</span>
+obj.<span class="fn">send</span>(<span class="st">:private_method</span>)</pre>
+    <div class="tip">💡 protected is rare — mainly for == and &lt;=&gt; between same-class instances.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Comparable</div>
+<pre><span class="kw">class</span> Box
+  <span class="fn">include</span> Comparable
+  attr_accessor <span class="st">:volume</span>
+
+  <span class="kw">def</span> <span class="fn">initialize</span>(v); <span class="st">@volume</span> = v; <span class="kw">end</span>
+
+  <span class="kw">def</span> <=>(other)
+    volume &lt;=&gt; other.volume
+  <span class="kw">end</span>
+  <span class="cm"># Gives: < > <= >= between? clamp sort min max</span>
+<span class="kw">end</span>
+
+boxes = [Box.<span class="fn">new</span>(<span class="st">3</span>), Box.<span class="fn">new</span>(<span class="st">1</span>), Box.<span class="fn">new</span>(<span class="st">2</span>)]
+boxes.<span class="fn">sort</span>.<span class="fn">map</span>(&:volume)  <span class="cm"># [1, 2, 3]</span>
+boxes.<span class="fn">min</span>.<span class="fn">volume</span>          <span class="cm"># 1</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">method_missing</div>
+<pre><span class="kw">class</span> Ghost
+  <span class="kw">def</span> <span class="fn">method_missing</span>(name, *args)
+    <span class="kw">if</span> name.<span class="fn">to_s</span>.<span class="fn">start_with?</span>(<span class="st">'say_'</span>)
+      word = name.<span class="fn">to_s</span>.<span class="fn">sub</span>(<span class="st">'say_'</span>, <span class="st">''</span>)
+      <span class="st">"#{word}!"</span>
+    <span class="kw">else</span>
+      <span class="kw">super</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">respond_to_missing?</span>(name, include_private = <span class="kw">false</span>)
+    name.<span class="fn">to_s</span>.<span class="fn">start_with?</span>(<span class="st">'say_'</span>) || <span class="kw">super</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+Ghost.<span class="fn">new</span>.<span class="fn">say_hello</span>              <span class="cm"># "hello!"</span>
+Ghost.<span class="fn">new</span>.<span class="fn">respond_to?</span>(<span class="st">:say_hi</span>)  <span class="cm"># true</span></pre>
+    <div class="tip">⚠ Always pair method_missing with respond_to_missing?</div>
+  </div>
+</div>
+</div>
+
+<!-- COLLECTIONS -->
+<div class="section" id="collections">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Array Essentials</div>
+<pre>a = [<span class="st">1</span>, <span class="st">2</span>, <span class="st">3</span>]
+a = Array.<span class="fn">new</span>(<span class="st">3</span>, <span class="st">0</span>)         <span class="cm"># [0, 0, 0]</span>
+a = Array.<span class="fn">new</span>(<span class="st">3</span>) { |i| i*<span class="st">2</span> } <span class="cm"># [0, 2, 4]</span>
+
+a[<span class="st">0</span>] / a[-<span class="st">1</span>]                 <span class="cm"># first / last</span>
+a[<span class="st">1</span>, <span class="st">2</span>]                      <span class="cm"># [2,3] start+length</span>
+a[<span class="st">1</span>..<span class="st">2</span>]                      <span class="cm"># [2,3] range</span>
+a.<span class="fn">first</span>(<span class="st">2</span>) / a.<span class="fn">last</span>(<span class="st">2</span>)
+
+a.<span class="fn">push</span>(<span class="st">4</span>) / a &lt;&lt; <span class="st">4</span>          <span class="cm"># append</span>
+a.<span class="fn">pop</span>                        <span class="cm"># remove+return last</span>
+a.<span class="fn">shift</span> / a.<span class="fn">unshift</span>(<span class="st">0</span>)       <span class="cm"># remove/prepend first</span>
+a.<span class="fn">flatten</span>                    <span class="cm"># nested → flat</span>
+a.<span class="fn">compact</span>                    <span class="cm"># remove nils</span>
+a.<span class="fn">uniq</span>                       <span class="cm"># remove duplicates</span>
+a.<span class="fn">flatten</span>(<span class="st">1</span>)                 <span class="cm"># one level only</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Enumerable</div>
+<pre>arr.<span class="fn">map</span>    { |x| x * <span class="st">2</span> }     <span class="cm"># transform</span>
+arr.<span class="fn">select</span> { |x| x > <span class="st">2</span> }     <span class="cm"># filter</span>
+arr.<span class="fn">reject</span> { |x| x > <span class="st">2</span> }     <span class="cm"># inverse filter</span>
+arr.<span class="fn">find</span>   { |x| x > <span class="st">2</span> }     <span class="cm"># first match</span>
+arr.<span class="fn">all?</span>   { |x| x > <span class="st">0</span> }     <span class="cm"># all satisfy?</span>
+arr.<span class="fn">any?</span>   { |x| x > <span class="st">5</span> }     <span class="cm"># any satisfy?</span>
+arr.<span class="fn">none?</span>  { |x| x < <span class="st">0</span> }     <span class="cm"># none satisfy?</span>
+arr.<span class="fn">count</span>  { |x| x.<span class="fn">even?</span> }   <span class="cm"># count matches</span>
+arr.<span class="fn">reduce</span>(<span class="st">0</span>) { |acc, x| acc + x }
+arr.<span class="fn">flat_map</span> { |x| [x, x*<span class="st">2</span>] }
+arr.<span class="fn">each_with_object</span>([]) { |x, a| a &lt;&lt; x.<span class="fn">to_s</span> }
+arr.<span class="fn">each_with_index</span>     { |x, i| ... }
+arr.<span class="fn">zip</span>([<span class="st">4</span>,<span class="st">5</span>,<span class="st">6</span>])          <span class="cm"># [[1,4],[2,5],[3,6]]</span>
+arr.<span class="fn">group_by</span> { |x| x % <span class="st">2</span> } <span class="cm"># {0=>[2], 1=>[1,3]}</span>
+arr.<span class="fn">tally</span>                   <span class="cm"># {"a"=>2, "b"=>1}</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Hash Essentials</div>
+<pre>h = { name: <span class="st">'Eric'</span>, age: <span class="st">30</span> }
+
+h[<span class="st">:name</span>]
+h.<span class="fn">fetch</span>(<span class="st">:name</span>)              <span class="cm"># raises if missing</span>
+h.<span class="fn">fetch</span>(<span class="st">:x</span>, <span class="st">'default'</span>)
+h.<span class="fn">dig</span>(<span class="st">:user</span>, <span class="st">:address</span>, <span class="st">:city</span>)
+
+h.<span class="fn">merge</span>({ city: <span class="st">'DC'</span> })
+h.<span class="fn">merge!</span>({ city: <span class="st">'DC'</span> })
+h.<span class="fn">select</span>  { |k,v| v > <span class="st">18</span> }
+h.<span class="fn">reject</span>  { |k,v| v.<span class="fn">nil?</span> }
+h.<span class="fn">transform_values</span> { |v| v.<span class="fn">to_s</span> }
+h.<span class="fn">transform_keys</span>   { |k| k.<span class="fn">to_s</span> }
+h.<span class="fn">slice</span>(<span class="st">:name</span>, <span class="st">:age</span>)
+h.<span class="fn">each</span> { |k, v| ... }
+h.<span class="fn">map</span>  { |k, v| [k, v*<span class="st">2</span>] }.<span class="fn">to_h</span>
+h.<span class="fn">any?</span> { |k, v| v > <span class="st">20</span> }</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ranges & Sorting</div>
+<pre>(<span class="st">1</span>..<span class="st">5</span>).<span class="fn">to_a</span>      <span class="cm"># [1,2,3,4,5] inclusive</span>
+(<span class="st">1</span>...<span class="st">5</span>).<span class="fn">to_a</span>     <span class="cm"># [1,2,3,4]   exclusive</span>
+(<span class="st">1</span>..<span class="st">10</span>).<span class="fn">cover?</span>(<span class="st">5.5</span>)   <span class="cm"># true (no iteration)</span>
+(<span class="st">1</span>..<span class="st">10</span>).<span class="fn">step</span>(<span class="st">2</span>).<span class="fn">to_a</span> <span class="cm"># [1,3,5,7,9]</span>
+
+arr.<span class="fn">sort</span>
+arr.<span class="fn">sort_by</span> { |x| x.name }
+arr.<span class="fn">sort_by</span> { |x| [x.a, x.b] }  <span class="cm"># multi-key</span>
+arr.<span class="fn">sort_by</span> { |x| -x.score }     <span class="cm"># descending</span>
+arr.<span class="fn">sort_by</span> { |x| [-x.priority, x.created_at] } <span class="cm"># priority DESC, created_at ASC</span>
+arr.<span class="fn">sort</span> { |a, b| [b.priority, a.created_at] &lt;=&gt; [a.priority, b.created_at] } <span class="cm"># tuple compare</span>
+arr.<span class="fn">min_by</span> / arr.<span class="fn">max_by</span> { |x| x.age }
+
+<span class="cm"># Spaceship</span>
+<span class="st">1</span> &lt;=&gt; <span class="st">2</span>  <span class="cm"># -1</span>
+<span class="st">2</span> &lt;=&gt; <span class="st">2</span>  <span class="cm">#  0</span>
+<span class="st">3</span> &lt;=&gt; <span class="st">2</span>  <span class="cm">#  1</span></pre>
+  </div>
+
+  <div class="card span2">
+    <div class="card-title">Destructuring & Splat</div>
+<pre><span class="cm"># Parallel assignment</span>
+a, b, c       = [<span class="st">1</span>, <span class="st">2</span>, <span class="st">3</span>]
+first, *rest  = [<span class="st">1</span>, <span class="st">2</span>, <span class="st">3</span>, <span class="st">4</span>]   <span class="cm"># rest = [2,3,4]</span>
+*init, last   = [<span class="st">1</span>, <span class="st">2</span>, <span class="st">3</span>, <span class="st">4</span>]   <span class="cm"># init = [1,2,3]</span>
+a, (b, c), d  = [<span class="st">1</span>, [<span class="st">2</span>, <span class="st">3</span>], <span class="st">4</span>]  <span class="cm"># nested destructure</span>
+
+<span class="cm"># Splat in methods</span>
+<span class="kw">def</span> <span class="fn">sum</span>(*nums); nums.<span class="fn">sum</span>; <span class="kw">end</span>
+<span class="fn">sum</span>(<span class="st">1</span>, <span class="st">2</span>, <span class="st">3</span>)           <span class="cm"># 6</span>
+
+<span class="cm"># Double splat (keyword args)</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name:, greeting: <span class="st">'Hello'</span>)
+  <span class="st">"#{greeting}, #{name}"</span>
+<span class="kw">end</span>
+opts = { name: <span class="st">'Eric'</span>, greeting: <span class="st">'Hey'</span> }
+<span class="fn">greet</span>(**opts)          <span class="cm"># "Hey, Eric"</span>
+
+<span class="cm"># Spread array as args</span>
+args = [<span class="st">1</span>, <span class="st">2</span>, <span class="st">3</span>]
+<span class="fn">some_method</span>(*args)</pre>
+  </div>
+</div>
+</div>
+
+<!-- BLOCKS, PROCS & LAMBDAS -->
+<div class="section" id="blocks">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Blocks</div>
+<pre><span class="cm"># Inline block</span>
+[<span class="st">1</span>,<span class="st">2</span>,<span class="st">3</span>].<span class="fn">each</span> { |x| puts x }
+
+<span class="cm"># do...end (multi-line)</span>
+[<span class="st">1</span>,<span class="st">2</span>,<span class="st">3</span>].<span class="fn">each</span> <span class="kw">do</span> |x|
+  puts x * <span class="st">2</span>
+<span class="kw">end</span>
+
+<span class="cm"># yield</span>
+<span class="kw">def</span> <span class="fn">twice</span>
+  <span class="kw">yield</span>
+  <span class="kw">yield</span>
+<span class="kw">end</span>
+<span class="fn">twice</span> { puts <span class="st">'hi'</span> }
+
+<span class="cm"># yield with args + guard</span>
+<span class="kw">def</span> <span class="fn">transform</span>(x)
+  <span class="kw">yield</span>(x) <span class="kw">if</span> <span class="fn">block_given?</span>
+<span class="kw">end</span>
+<span class="fn">transform</span>(<span class="st">5</span>) { |n| n * <span class="st">2</span> }  <span class="cm"># 10</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Proc vs Lambda</div>
+<pre><span class="cm"># Proc — loose args, returns from enclosing method</span>
+p = proc { |x| x * <span class="st">2</span> }
+p.<span class="fn">call</span>(<span class="st">5</span>) / p.(<span class="st">5</span>) / p[<span class="st">5</span>]  <span class="cm"># all valid</span>
+
+<span class="cm"># Lambda — strict args, returns from lambda only</span>
+l = lambda { |x| x * <span class="st">2</span> }
+l = ->(x) { x * <span class="st">2</span> }       <span class="cm"># stabby lambda</span>
+l.<span class="fn">lambda?</span>  <span class="cm"># true</span>
+
+<span class="cm"># Currying</span>
+add = ->(a, b) { a + b }
+add5 = add.<span class="fn">curry</span>.<span class="fn">call</span>(<span class="st">5</span>)
+add5.<span class="fn">call</span>(<span class="st">3</span>)   <span class="cm"># 8</span></pre>
+    <div class="tip">💡 Prefer lambdas — predictable return and strict arity.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">& Operator</div>
+<pre><span class="cm"># Symbol to proc</span>
+[<span class="st">'a'</span>, <span class="st">'b'</span>].<span class="fn">map</span>(&:upcase)     <span class="cm"># ['A', 'B']</span>
+[<span class="st">1</span>, <span class="st">2</span>, <span class="st">3</span>].<span class="fn">select</span>(&:odd?)     <span class="cm"># [1, 3]</span>
+[<span class="st">'1'</span>,<span class="st">'2'</span>].<span class="fn">map</span>(&:to_i)         <span class="cm"># [1, 2]</span>
+
+<span class="cm"># Convert lambda to block</span>
+double = ->(x) { x * <span class="st">2</span> }
+[<span class="st">1</span>,<span class="st">2</span>,<span class="st">3</span>].<span class="fn">map</span>(&double)         <span class="cm"># [2, 4, 6]</span>
+
+<span class="cm"># Capture block as proc</span>
+<span class="kw">def</span> <span class="fn">capture</span>(&block)
+  block.<span class="fn">call</span>(<span class="st">42</span>)
+<span class="kw">end</span>
+<span class="fn">capture</span> { |n| n * <span class="st">2</span> }       <span class="cm"># 84</span>
+
+<span class="cm"># Method objects as blocks</span>
+m = method(<span class="st">:puts</span>)
+[<span class="st">1</span>,<span class="st">2</span>,<span class="st">3</span>].<span class="fn">each</span>(&m)</pre>
+  </div>
+
+  <div class="card span2">
+    <div class="card-title">Proc vs Lambda Quick Reference</div>
+    <table>
+      <tr><th></th><th>Proc</th><th>Lambda</th></tr>
+      <tr><td>Arity check</td><td>No — extra args silently nil</td><td>Yes — raises ArgumentError</td></tr>
+      <tr><td><code>return</code></td><td>Returns from enclosing method</td><td>Returns from lambda only</td></tr>
+      <tr><td><code>lambda?</code></td><td><code>false</code></td><td><code>true</code></td></tr>
+      <tr><td>Creation</td><td><code>proc { }</code> / <code>Proc.new { }</code></td><td><code>lambda { }</code> / <code>-&gt;{ }</code></td></tr>
+      <tr><td>Best for</td><td>Callbacks, block capture</td><td>Function values, currying</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Closures</div>
+<pre>x = <span class="st">10</span>
+add_x = ->(n) { n + x }
+add_x.<span class="fn">call</span>(<span class="st">5</span>)   <span class="cm"># 15</span>
+
+x = <span class="st">20</span>
+add_x.<span class="fn">call</span>(<span class="st">5</span>)   <span class="cm"># 25 ← sees updated x!</span>
+
+<span class="cm"># Closures capture the binding, not the value</span>
+fns = (<span class="st">1</span>..<span class="st">3</span>).<span class="fn">map</span> { |i| -> { i * <span class="st">2</span> } }
+fns[<span class="st">0</span>].<span class="fn">call</span>  <span class="cm"># 2</span>
+fns[<span class="st">1</span>].<span class="fn">call</span>  <span class="cm"># 4</span>
+fns[<span class="st">2</span>].<span class="fn">call</span>  <span class="cm"># 6</span></pre>
+  </div>
+</div>
+</div>
+
+<!-- STRINGS & SYMBOLS -->
+<div class="section" id="strings">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">String Methods</div>
+<pre>s = <span class="st">"Hello, World"</span>
+s.<span class="fn">upcase</span> / s.<span class="fn">downcase</span> / s.<span class="fn">swapcase</span>
+s.<span class="fn">capitalize</span>             <span class="cm"># "Hello, world"</span>
+s.<span class="fn">length</span> / s.<span class="fn">size</span>
+s.<span class="fn">reverse</span>
+s.<span class="fn">strip</span> / s.<span class="fn">lstrip</span> / s.<span class="fn">rstrip</span>
+s.<span class="fn">chomp</span>                   <span class="cm"># remove trailing \n</span>
+s.<span class="fn">chop</span>                    <span class="cm"># remove last char</span>
+s.<span class="fn">include?</span>(<span class="st">'World'</span>)
+s.<span class="fn">start_with?</span>(<span class="st">'Hello'</span>)
+s.<span class="fn">end_with?</span>(<span class="st">'World'</span>)
+s.<span class="fn">split</span>(<span class="st">', '</span>)            <span class="cm"># ["Hello", "World"]</span>
+s.<span class="fn">gsub</span>(<span class="st">'l'</span>, <span class="st">'r'</span>)        <span class="cm"># "Herro, Worrd"</span>
+s.<span class="fn">gsub</span>(<span class="st">/\d+/</span>, <span class="st">'NUM'</span>)
+s.<span class="fn">scan</span>(<span class="st">/\w+/</span>)            <span class="cm"># array of matches</span>
+s.<span class="fn">match?</span>(<span class="st">/Hello/</span>)        <span class="cm"># true, no MatchData</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Interpolation & Heredoc</div>
+<pre>name = <span class="st">"Eric"</span>
+<span class="st">"Hello #{name.upcase}"</span>
+<span class="st">'Hello #{name}'</span>         <span class="cm"># no interpolation</span>
+<span class="st">%Q{Hello #{name}}</span>       <span class="cm"># like double-quote</span>
+<span class="st">%q{No #{interp}}</span>        <span class="cm"># like single-quote</span>
+
+text = &lt;&lt;~HEREDOC
+  Line one
+  Line #{name}
+HEREDOC
+<span class="cm"># <<~ strips leading whitespace</span>
+
+<span class="cm"># Frozen string literal (top of file)</span>
+<span class="cm"># frozen_string_literal: true</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Symbols & Regex</div>
+<pre><span class="st">:name</span>.<span class="fn">to_s</span>           <span class="cm"># "name"</span>
+<span class="st">"name"</span>.<span class="fn">to_sym</span>        <span class="cm"># :name</span>
+<span class="st">%i[foo bar baz]</span>     <span class="cm"># [:foo, :bar, :baz]</span>
+
+<span class="cm"># Symbols: same obj always</span>
+<span class="st">:foo</span>.object_id == <span class="st">:foo</span>.object_id  <span class="cm"># true</span>
+<span class="st">"foo"</span>.object_id == <span class="st">"foo"</span>.object_id <span class="cm"># false</span>
+
+<span class="cm"># Regex</span>
+str =~ <span class="st">/\d+/</span>              <span class="cm"># index or nil</span>
+m = str.<span class="fn">match</span>(<span class="st">/(\d{4})/</span>)
+m[<span class="st">1</span>]                       <span class="cm"># capture group</span>
+m = str.<span class="fn">match</span>(<span class="st">/(?&lt;yr&gt;\d{4})/</span>)
+m[<span class="st">:yr</span>]                     <span class="cm"># named capture</span>
+str.<span class="fn">gsub</span>(<span class="st">/\d+/</span>) { |n| n.<span class="fn">to_i</span> * <span class="st">2</span> }</pre>
+  </div>
+
+  <div class="card span2">
+    <div class="card-title">String vs Symbol vs Frozen</div>
+    <table>
+      <tr><th></th><th>String</th><th>Symbol</th><th>Frozen String</th></tr>
+      <tr><td>Mutable</td><td>Yes (default)</td><td>No</td><td>No</td></tr>
+      <tr><td>Identity</td><td>New obj each time</td><td>Same obj always</td><td>May be deduped</td></tr>
+      <tr><td>GC pressure</td><td>Higher</td><td>Lower (interned)</td><td>Lower</td></tr>
+      <tr><td>Use for</td><td>User data, output</td><td>Keys, identifiers</td><td>Constants, keys</td></tr>
+      <tr><td>Freeze</td><td><code>"str".freeze</code></td><td>Always frozen</td><td><code># frozen_string_literal: true</code></td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- MODULES & MIXINS -->
+<div class="section" id="modules">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">include / extend / prepend</div>
+<pre><span class="kw">module</span> M
+  <span class="kw">def</span> <span class="fn">hello</span>; <span class="st">"hello from M"</span>; <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># include → instance methods</span>
+<span class="kw">class</span> A; <span class="fn">include</span> M; <span class="kw">end</span>
+A.<span class="fn">new</span>.<span class="fn">hello</span>
+
+<span class="cm"># extend → class methods</span>
+<span class="kw">class</span> B; <span class="fn">extend</span> M; <span class="kw">end</span>
+B.<span class="fn">hello</span>
+
+<span class="cm"># extend on single object</span>
+obj = Object.<span class="fn">new</span>; obj.<span class="fn">extend</span>(M)
+obj.<span class="fn">hello</span>
+
+<span class="cm"># prepend → before class in lookup chain</span>
+<span class="kw">class</span> C; <span class="fn">prepend</span> M; <span class="kw">end</span>
+<span class="cm"># M#hello called first; use super to reach C</span>
+<span class="cm"># Used for: decorators, logging, memoization</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ActiveSupport::Concern</div>
+<pre><span class="kw">module</span> Trackable
+  <span class="fn">extend</span> ActiveSupport::Concern
+
+  <span class="fn">included</span> <span class="kw">do</span>
+    <span class="fn">before_create</span> <span class="st">:set_uuid</span>
+    <span class="fn">scope</span> <span class="st">:recent</span>, -&gt; { <span class="fn">order</span>(created_at: :desc) }
+  <span class="kw">end</span>
+
+  <span class="fn">class_methods</span> <span class="kw">do</span>
+    <span class="kw">def</span> <span class="fn">find_by_uuid</span>(uuid)
+      <span class="fn">find_by!</span>(uuid: uuid)
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">set_uuid</span>
+    <span class="kw">self</span>.uuid ||= SecureRandom.<span class="fn">uuid</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="kw">class</span> Post &lt; ApplicationRecord
+  <span class="fn">include</span> Trackable
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Method Lookup Chain</div>
+<pre><span class="kw">class</span> Child &lt; Parent
+  <span class="fn">include</span> ModA
+  <span class="fn">prepend</span> ModB
+<span class="kw">end</span>
+
+Child.<span class="fn">ancestors</span>
+<span class="cm"># [ModB, Child, ModA, Parent,</span>
+<span class="cm">#  Object, Kernel, BasicObject]</span>
+
+Child.<span class="fn">instance_methods</span>(<span class="kw">false</span>) <span class="cm"># own only</span>
+Child.<span class="fn">method_defined?</span>(<span class="st">:foo</span>)   <span class="cm"># incl. inherited</span>
+
+<span class="cm"># super travels up chain</span>
+<span class="kw">def</span> <span class="fn">foo</span>; <span class="kw">super</span>; <span class="kw">end</span>    <span class="cm"># passes same args</span>
+<span class="kw">def</span> <span class="fn">foo</span>; <span class="kw">super</span>(); <span class="kw">end</span>  <span class="cm"># explicit no args</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Enumerable Mixin</div>
+<pre><span class="kw">class</span> WordCollection
+  <span class="fn">include</span> Enumerable
+
+  <span class="kw">def</span> <span class="fn">initialize</span>; <span class="st">@words</span> = []; <span class="kw">end</span>
+  <span class="kw">def</span> <span class="fn">add</span>(w); <span class="st">@words</span> &lt;&lt; w; <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">each</span>(&block)
+    <span class="st">@words</span>.<span class="fn">each</span>(&block)
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+wc = WordCollection.<span class="fn">new</span>
+wc.<span class="fn">add</span>(<span class="st">'hello'</span>); wc.<span class="fn">add</span>(<span class="st">'world'</span>)
+wc.<span class="fn">map</span>(&:upcase)   <span class="cm"># ['HELLO', 'WORLD']</span>
+wc.<span class="fn">sort</span>            <span class="cm"># sorted array</span>
+wc.<span class="fn">min</span> / wc.<span class="fn">max</span></pre>
+  </div>
+
+  <div class="card span2">
+    <div class="card-title">Struct & OpenStruct</div>
+<pre><span class="cm"># Struct: lightweight value object</span>
+Point = Struct.<span class="fn">new</span>(<span class="st">:x</span>, <span class="st">:y</span>)
+p = Point.<span class="fn">new</span>(<span class="st">1</span>, <span class="st">2</span>)
+p.x / p.<span class="fn">to_h</span> / p.<span class="fn">members</span>   <span class="cm"># 1 / {x:1,y:2} / [:x,:y]</span>
+
+<span class="cm"># With extra methods</span>
+Point = Struct.<span class="fn">new</span>(<span class="st">:x</span>, <span class="st">:y</span>) <span class="kw">do</span>
+  <span class="kw">def</span> <span class="fn">distance</span>; Math.<span class="fn">sqrt</span>(x**<span class="st">2</span> + y**<span class="st">2</span>); <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># Struct equality: value-based</span>
+Point.<span class="fn">new</span>(<span class="st">1</span>,<span class="st">2</span>) == Point.<span class="fn">new</span>(<span class="st">1</span>,<span class="st">2</span>)  <span class="cm"># true!</span>
+
+<span class="cm"># OpenStruct: dynamic (avoid in perf-critical code)</span>
+<span class="fn">require</span> <span class="st">'ostruct'</span>
+o = OpenStruct.<span class="fn">new</span>(name: <span class="st">'Eric'</span>)
+o.anything = <span class="st">'dynamic!'</span></pre>
+  </div>
+</div>
+</div>
+
+<!-- MISC & GOTCHAS -->
+<div class="section" id="misc">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Control Flow</div>
+<pre><span class="fn">puts</span> <span class="st">'hi'</span> <span class="kw">unless</span> admin?
+<span class="fn">sleep</span> <span class="st">1</span> <span class="kw">until</span> ready?
+<span class="kw">return</span> <span class="kw">nil</span> <span class="kw">if</span> value.<span class="fn">blank?</span>
+
+x > <span class="st">0</span> ? <span class="st">'pos'</span> : <span class="st">'neg'</span>
+
+<span class="kw">case</span> obj
+<span class="kw">when</span> <span class="ty">String</span>               <span class="kw">then</span> <span class="st">'string'</span>
+<span class="kw">when</span> <span class="ty">Integer</span>              <span class="kw">then</span> <span class="st">'int'</span>
+<span class="kw">when</span> <span class="st">/foo/</span>                <span class="kw">then</span> <span class="st">'matches foo'</span>
+<span class="kw">when</span> (<span class="st">1</span>..<span class="st">10</span>)              <span class="kw">then</span> <span class="st">'in range'</span>
+<span class="kw">when</span> ->(x) { x > <span class="st">100</span> }   <span class="kw">then</span> <span class="st">'big'</span>
+<span class="kw">else</span> <span class="st">'other'</span>
+<span class="kw">end</span>
+<span class="cm"># case uses === for each when</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Exception Handling</div>
+<pre><span class="kw">begin</span>
+  risky_call
+<span class="kw">rescue</span> ArgumentError => e
+  <span class="fn">puts</span> e.<span class="fn">message</span>
+<span class="kw">rescue</span> RuntimeError, TypeError => e
+  <span class="fn">log</span>(e)
+  <span class="kw">retry</span>              <span class="cm"># re-run begin block</span>
+<span class="kw">else</span>
+  <span class="fn">puts</span> <span class="st">'no error'</span>   <span class="cm"># runs only if no exception</span>
+<span class="kw">ensure</span>
+  <span class="fn">cleanup</span>            <span class="cm"># always runs</span>
+<span class="kw">end</span>
+
+<span class="kw">raise</span> ArgumentError, <span class="st">'bad input'</span>
+<span class="kw">raise</span>               <span class="cm"># re-raise current</span>
+
+<span class="kw">class</span> PaymentError &lt; StandardError; <span class="kw">end</span>
+<span class="cm"># ⚠ Rescue StandardError, not Exception</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Truthiness & Equality</div>
+<pre><span class="cm"># ONLY nil and false are falsy!</span>
+<span class="cm"># 0, "", [], {} are ALL truthy</span>
+
+==           <span class="cm"># value equality (overridable)</span>
+.<span class="fn">equal?</span>     <span class="cm"># object identity (same object_id)</span>
+.<span class="fn">eql?</span>       <span class="cm"># strict equality (used in Hash)</span>
+===          <span class="cm"># case subsumption (when uses this)</span>
+
+<span class="st">1</span> == <span class="st">1.0</span>          <span class="cm"># true  (coerces)</span>
+<span class="st">1</span>.<span class="fn">eql?</span>(<span class="st">1.0</span>)       <span class="cm"># false (strict)</span>
+<span class="st">:foo</span>.<span class="fn">equal?</span>(<span class="st">:foo</span>) <span class="cm"># true  (interned)</span>
+<span class="st">"a"</span>.<span class="fn">equal?</span>(<span class="st">"a"</span>)  <span class="cm"># false (diff objects)</span>
+
+<span class="st">nil</span>.<span class="fn">nil?</span>    <span class="cm"># true</span>
+<span class="st">false</span>.<span class="fn">nil?</span> <span class="cm"># false</span>
+<span class="st">0</span>.<span class="fn">nil?</span>     <span class="cm"># false  ← gotcha!</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Nil & Safe Navigation</div>
+<pre>user&amp;.profile&amp;.avatar_url  <span class="cm"># nil if any step nil</span>
+
+x.<span class="fn">nil?</span>       <span class="cm"># only true for nil</span>
+x.<span class="fn">blank?</span>     <span class="cm"># Rails: nil,"","  ",[],{}</span>
+x.<span class="fn">present?</span>   <span class="cm"># Rails: !blank?</span>
+x.<span class="fn">presence</span>   <span class="cm"># returns x or nil if blank</span>
+
+<span class="cm"># Default assignment</span>
+<span class="st">@val</span> ||= <span class="fn">expensive</span>()   <span class="cm"># memoize</span>
+hash[<span class="st">:key</span>] ||= []      <span class="cm"># ensure default</span>
+
+<span class="cm"># Null object pattern</span>
+user = User.<span class="fn">find_by</span>(id: id) || NullUser.<span class="fn">new</span></pre>
+  </div>
+
+  <div class="card span2">
+    <div class="card-title">Common Gotchas</div>
+    <table>
+      <tr><th>Gotcha</th><th>Explanation</th><th>Fix</th></tr>
+      <tr><td><code>0</code> is truthy</td><td>Only <code>nil</code> and <code>false</code> are falsy</td><td>Use <code>.nil?</code> or <code>.zero?</code> explicitly</td></tr>
+      <tr><td><code>array = array + [x]</code></td><td>Creates new array, original unchanged</td><td>Use <code>array << x</code> or <code>array.push(x)</code></td></tr>
+      <tr><td><code>hash.merge</code></td><td>Non-destructive — returns new hash</td><td>Use <code>merge!</code> to mutate in place</td></tr>
+      <tr><td><code>def method(x=[])</code></td><td>Default args evaluated once in Ruby</td><td>Use <code>x = nil; x ||= []</code> inside body</td></tr>
+      <tr><td><code>@@class_var</code></td><td>Shared across ALL subclasses</td><td>Use <code>@class_instance_var</code> on class instead</td></tr>
+      <tr><td><code>p.return</code> in proc</td><td>Returns from enclosing method, not proc</td><td>Use lambda instead of proc</td></tr>
+      <tr><td><code>"str" == :sym</code></td><td>Always false — different types</td><td>Use <code>.to_sym</code> / <code>.to_s</code> to convert</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- RSPEC -->
+<div class="section" id="rspec">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Structure</div>
+<pre><span class="cm"># spec/models/user_spec.rb</span>
+RSpec.<span class="fn">describe</span> User <span class="kw">do</span>
+  <span class="fn">describe</span> <span class="st">'#full_name'</span> <span class="kw">do</span>
+    <span class="fn">context</span> <span class="st">'when first and last name set'</span> <span class="kw">do</span>
+      <span class="fn">it</span> <span class="st">'returns full name'</span> <span class="kw">do</span>
+        user = User.<span class="fn">new</span>(first: <span class="st">'Eric'</span>, last: <span class="st">'B'</span>)
+        <span class="fn">expect</span>(user.<span class="fn">full_name</span>).<span class="fn">to</span> eq(<span class="st">'Eric B'</span>)
+      <span class="kw">end</span>
+    <span class="kw">end</span>
+
+    <span class="fn">context</span> <span class="st">'when last name missing'</span> <span class="kw">do</span>
+      <span class="fn">it</span> <span class="st">'returns first name only'</span> <span class="kw">do</span>
+        user = User.<span class="fn">new</span>(first: <span class="st">'Eric'</span>)
+        <span class="fn">expect</span>(user.<span class="fn">full_name</span>).<span class="fn">to</span> eq(<span class="st">'Eric'</span>)
+      <span class="kw">end</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Setup Hooks</div>
+<pre><span class="fn">before</span>(<span class="st">:each</span>) { <span class="st">@user</span> = User.<span class="fn">create!</span>(name: <span class="st">'Eric'</span>) }
+<span class="fn">before</span>(<span class="st">:all</span>)  { <span class="cm"># runs once before describe block</span> }
+<span class="fn">after</span>(<span class="st">:each</span>)  { <span class="cm"># cleanup per example</span> }
+<span class="fn">around</span>(<span class="st">:each</span>) { |ex| <span class="fn">setup</span>; ex.<span class="fn">run</span>; <span class="fn">teardown</span> }
+
+<span class="cm"># let: lazy, memoized per example</span>
+<span class="fn">let</span>(<span class="st">:user</span>)  { User.<span class="fn">new</span>(name: <span class="st">'Eric'</span>) }
+<span class="fn">let!</span>(<span class="st">:post</span>) { Post.<span class="fn">create!</span>(user: user) }
+<span class="cm"># let! is eager — runs before each example</span>
+
+<span class="cm"># subject: the thing under test</span>
+<span class="fn">subject</span> { described_class.<span class="fn">new</span>(name: <span class="st">'Eric'</span>) }
+<span class="cm"># described_class → the class in RSpec.describe</span></pre>
+    <div class="tip">💡 Prefer let over before + instance var. let is lazy and re-evaluated each example.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Matchers</div>
+<pre><span class="cm"># Equality</span>
+<span class="fn">expect</span>(x).<span class="fn">to</span> eq(<span class="st">5</span>)           <span class="cm"># ==</span>
+<span class="fn">expect</span>(x).<span class="fn">to</span> eql(<span class="st">5</span>)          <span class="cm"># .eql?</span>
+<span class="fn">expect</span>(x).<span class="fn">to</span> equal(y)        <span class="cm"># same object</span>
+<span class="fn">expect</span>(x).<span class="fn">to</span> be(<span class="kw">nil</span>)         <span class="cm"># identity</span>
+
+<span class="cm"># Truthiness</span>
+<span class="fn">expect</span>(x).<span class="fn">to</span> be_truthy
+<span class="fn">expect</span>(x).<span class="fn">to</span> be_falsy
+<span class="fn">expect</span>(x).<span class="fn">to</span> be_nil
+
+<span class="cm"># Comparison</span>
+<span class="fn">expect</span>(x).<span class="fn">to</span> be > <span class="st">5</span>
+<span class="fn">expect</span>(x).<span class="fn">to</span> be_between(<span class="st">1</span>, <span class="st">10</span>)
+<span class="fn">expect</span>(x).<span class="fn">to</span> be_within(<span class="st">0.1</span>).<span class="fn">of</span>(<span class="st">3.14</span>)
+
+<span class="cm"># Negation</span>
+<span class="fn">expect</span>(x).<span class="fn">not_to</span> eq(<span class="st">5</span>)
+<span class="fn">expect</span>(x).<span class="fn">to_not</span> be_nil</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Collection & Type Matchers</div>
+<pre><span class="cm"># Collections</span>
+<span class="fn">expect</span>(arr).<span class="fn">to</span> include(<span class="st">3</span>)
+<span class="fn">expect</span>(arr).<span class="fn">to</span> include(<span class="st">1</span>, <span class="st">2</span>)
+<span class="fn">expect</span>(arr).<span class="fn">to</span> contain_exactly(<span class="st">1</span>, <span class="st">2</span>, <span class="st">3</span>)   <span class="cm"># any order</span>
+<span class="fn">expect</span>(arr).<span class="fn">to</span> match_array([<span class="st">3</span>, <span class="st">1</span>, <span class="st">2</span>])      <span class="cm"># any order</span>
+<span class="fn">expect</span>(arr).<span class="fn">to</span> have_attributes(size: <span class="st">3</span>)
+<span class="fn">expect</span>(arr).<span class="fn">to</span> all(be > <span class="st">0</span>)
+<span class="fn">expect</span>(hash).<span class="fn">to</span> include(name: <span class="st">'Eric'</span>)
+
+<span class="cm"># Type</span>
+<span class="fn">expect</span>(x).<span class="fn">to</span> be_a(<span class="ty">String</span>)
+<span class="fn">expect</span>(x).<span class="fn">to</span> be_an_instance_of(<span class="ty">Hash</span>)
+<span class="fn">expect</span>(x).<span class="fn">to</span> be_kind_of(<span class="ty">Numeric</span>)
+
+<span class="cm"># Dynamic predicate matchers</span>
+<span class="fn">expect</span>(user).<span class="fn">to</span> be_admin       <span class="cm"># user.admin?</span>
+<span class="fn">expect</span>(str).<span class="fn">to</span> be_empty        <span class="cm"># str.empty?</span>
+<span class="fn">expect</span>(obj).<span class="fn">to</span> have_key(<span class="st">:name</span>) <span class="cm"># obj.has_key?</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Doubles & Mocks</div>
+<pre><span class="cm"># Basic double (strict by default in RSpec 3)</span>
+dbl = <span class="fn">double</span>(<span class="st">'User'</span>, name: <span class="st">'Eric'</span>, age: <span class="st">30</span>)
+dbl.name   <span class="cm"># 'Eric'</span>
+
+<span class="cm"># Instance double (verifies against real class)</span>
+dbl = <span class="fn">instance_double</span>(<span class="ty">User</span>, name: <span class="st">'Eric'</span>)
+
+<span class="cm"># Class double</span>
+dbl = <span class="fn">class_double</span>(<span class="ty">User</span>)
+
+<span class="cm"># Stub a method</span>
+<span class="fn">allow</span>(user).<span class="fn">to</span> receive(<span class="st">:name</span>).<span class="fn">and_return</span>(<span class="st">'Eric'</span>)
+<span class="fn">allow</span>(user).<span class="fn">to</span> receive(<span class="st">:save</span>).<span class="fn">and_return</span>(<span class="kw">false</span>)
+<span class="fn">allow</span>(User).<span class="fn">to</span> receive(<span class="st">:find</span>).<span class="fn">and_return</span>(user)
+
+<span class="cm"># Raise from stub</span>
+<span class="fn">allow</span>(svc).<span class="fn">to</span> receive(<span class="st">:call</span>).<span class="fn">and_raise</span>(RuntimeError)</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Message Expectations</div>
+<pre><span class="cm"># expect call to happen (mock)</span>
+<span class="fn">expect</span>(mailer).<span class="fn">to</span> receive(<span class="st">:deliver_now</span>)
+<span class="fn">expect</span>(user).<span class="fn">to</span> receive(<span class="st">:save</span>).<span class="fn">once</span>
+<span class="fn">expect</span>(obj).<span class="fn">to</span>  receive(<span class="st">:log</span>).<span class="fn">at_least</span>(<span class="st">2</span>).<span class="fn">times</span>
+<span class="fn">expect</span>(obj).<span class="fn">to</span>  receive(<span class="st">:call</span>).<span class="fn">with</span>(<span class="st">'arg'</span>)
+<span class="fn">expect</span>(obj).<span class="fn">not_to</span> receive(<span class="st">:delete</span>)
+
+<span class="cm"># Spy (stub first, assert after)</span>
+spy = <span class="fn">spy</span>(<span class="st">'mailer'</span>)
+<span class="fn">allow</span>(spy).<span class="fn">to</span> receive(:deliver)
+<span class="cm"># ... exercise code ...</span>
+<span class="fn">expect</span>(spy).<span class="fn">to</span> have_received(<span class="st">:deliver</span>).<span class="fn">once</span>
+
+<span class="cm"># with matchers</span>
+<span class="fn">expect</span>(obj).<span class="fn">to</span> receive(<span class="st">:go</span>)
+  .<span class="fn">with</span>(hash_including(name: <span class="st">'Eric'</span>))</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Raising & Changing</div>
+<pre><span class="cm"># Exceptions</span>
+<span class="fn">expect</span> { risky }.<span class="fn">to</span> raise_error
+<span class="fn">expect</span> { risky }.<span class="fn">to</span> raise_error(ArgumentError)
+<span class="fn">expect</span> { risky }.<span class="fn">to</span> raise_error(<span class="st">/bad input/</span>)
+<span class="fn">expect</span> { safe  }.<span class="fn">not_to</span> raise_error
+
+<span class="cm"># Change</span>
+<span class="fn">expect</span> { User.<span class="fn">create!</span>(name: <span class="st">'x'</span>) }
+  .<span class="fn">to</span> change(User, <span class="st">:count</span>).<span class="fn">by</span>(<span class="st">1</span>)
+
+<span class="fn">expect</span> { user.<span class="fn">update!</span>(age: <span class="st">31</span>) }
+  .<span class="fn">to</span> change { user.age }.<span class="fn">from</span>(<span class="st">30</span>).<span class="fn">to</span>(<span class="st">31</span>)
+
+<span class="fn">expect</span> { action }.<span class="fn">to</span> change(Post, <span class="st">:count</span>).<span class="fn">by_at_least</span>(<span class="st">1</span>)
+
+<span class="cm"># Output</span>
+<span class="fn">expect</span> { <span class="fn">puts</span> <span class="st">'hi'</span> }.<span class="fn">to</span> output(<span class="st">"hi\n"</span>).<span class="fn">to_stdout</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Shared Examples & Metadata</div>
+<pre><span class="cm"># Define shared examples</span>
+RSpec.<span class="fn">shared_examples</span> <span class="st">'a serializable object'</span> <span class="kw">do</span>
+  <span class="fn">it</span> { <span class="fn">expect</span>(subject).<span class="fn">to</span> respond_to(<span class="st">:to_json</span>) }
+  <span class="fn">it</span> { <span class="fn">expect</span>(subject).<span class="fn">to</span> respond_to(<span class="st">:as_json</span>) }
+<span class="kw">end</span>
+
+<span class="fn">describe</span> User <span class="kw">do</span>
+  it_behaves_like <span class="st">'a serializable object'</span>
+  it_behaves_like <span class="st">'a serializable object'</span> <span class="kw">do</span>
+    <span class="fn">let</span>(<span class="st">:subject</span>) { User.<span class="fn">new</span> }
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cm"># Pending / skip</span>
+<span class="fn">it</span> <span class="st">'is todo'</span>            <span class="cm"># pending (no block)</span>
+<span class="fn">xit</span> <span class="st">'skip this'</span> <span class="kw">do</span> ...<span class="kw">end</span> <span class="cm"># skip</span>
+<span class="fn">it</span> <span class="st">'skip'</span>, skip: <span class="st">'reason'</span> <span class="kw">do</span> ...<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Request Specs (Rails API)</div>
+<pre>RSpec.<span class="fn">describe</span> <span class="st">'POST /api/v1/users'</span>, type: <span class="st">:request</span> <span class="kw">do</span>
+  <span class="fn">let</span>(<span class="st">:valid_params</span>) { { user: { name: <span class="st">'Eric'</span>, email: <span class="st">'e@x.com'</span> } } }
+
+  <span class="fn">it</span> <span class="st">'creates a user'</span> <span class="kw">do</span>
+    <span class="fn">post</span> <span class="st">'/api/v1/users'</span>, params: valid_params, as: <span class="st">:json</span>
+
+    <span class="fn">expect</span>(response).<span class="fn">to</span> have_http_status(<span class="st">:created</span>)
+    <span class="fn">expect</span>(JSON.<span class="fn">parse</span>(response.body)[<span class="st">'name'</span>]).<span class="fn">to</span> eq(<span class="st">'Eric'</span>)
+  <span class="kw">end</span>
+
+  <span class="fn">it</span> <span class="st">'returns errors on invalid data'</span> <span class="kw">do</span>
+    <span class="fn">post</span> <span class="st">'/api/v1/users'</span>, params: { user: { name: <span class="st">''</span> } }, as: <span class="st">:json</span>
+    <span class="fn">expect</span>(response).<span class="fn">to</span> have_http_status(<span class="st">:unprocessable_entity</span>)
+    <span class="fn">expect</span>(JSON.<span class="fn">parse</span>(response.body)).<span class="fn">to</span> include(<span class="st">'errors'</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Matchers Quick Reference</div>
+    <table>
+      <tr><th>Matcher</th><th>Tests</th></tr>
+      <tr><td><code>eq(val)</code></td><td>Value equality <code>==</code></td></tr>
+      <tr><td><code>be_nil / be_truthy / be_falsy</code></td><td>Nil / truthiness</td></tr>
+      <tr><td><code>include(x)</code></td><td>Array/string/hash contains</td></tr>
+      <tr><td><code>match_array([…])</code></td><td>Same elements, any order</td></tr>
+      <tr><td><code>contain_exactly(…)</code></td><td>Exact elements, any order</td></tr>
+      <tr><td><code>have_attributes(k: v)</code></td><td>Object attribute values</td></tr>
+      <tr><td><code>raise_error(Cls)</code></td><td>Exception raised</td></tr>
+      <tr><td><code>change(obj, :attr).by(n)</code></td><td>Attribute changes by n</td></tr>
+      <tr><td><code>be_a(Klass)</code></td><td>Type check (is_a?)</td></tr>
+      <tr><td><code>respond_to(:method)</code></td><td>Method defined</td></tr>
+      <tr><td><code>have_http_status</code></td><td>Rails response status</td></tr>
+      <tr><td><code>be_*</code> (dynamic)</td><td>Calls <code>*?</code> predicate method</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<script src="./assets/refsheet.js"></script>
+</body>
+</html>

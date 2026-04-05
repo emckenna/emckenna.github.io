@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./assets/refsheet-base.css" />
+<link rel="stylesheet" href="./assets/refsheet-themes.css" />
+
+<style>
+
+  :root {
+    --accent2: #1f6fc9;
+    --accent3: #1a7a4a;
+    --tag-bg: #eef2fb;
+    --tag-border: #c0cff0;
+  }
+
+  .pill {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    letter-spacing: 0.3px;
+  }
+  .pill-blue { background: var(--tag-bg); color: var(--accent2); border: 1px solid var(--tag-border); }
+  .pill-red { background: #fdf0ec; color: var(--accent); border: 1px solid #f0cfc3; }
+  .pill-green { background: #edf7f2; color: var(--accent3); border: 1px solid #b8e0cc; }
+  .pill-purple { background: #f4eefb; color: var(--fn); border: 1px solid #d8c2f0; }
+
+  .row { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+
+</style>
+</head>
+<body data-theme="crisp">
+
+<header>
+  <h1>React + TypeScript</h1>
+  <span class="badge">SE II Ref</span>
+  <div class="spacer"></div>
+  <div class="palettes">
+    <span>Theme</span>
+    <div class="swatch active" data-p="crisp"    title="Crisp"    onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="warm"     title="Warm"     onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="forest"   title="Forest"   onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="slate"    title="Slate"    onclick="setTheme(this)"></div>
+    <div class="swatch"        data-p="midnight" title="Midnight" onclick="setTheme(this)"></div>
+    <a class="header-link" href="./index.html" title="Back to index" aria-label="Back to index">↑</a>
+  </div>
+</header>
+
+<nav id="nav">
+  <button class="active" onclick="show('hooks')">Hooks + TS</button>
+  <button onclick="show('components')">Components</button>
+  <button onclick="show('events')">Events</button>
+  <button onclick="show('patterns')">Patterns</button>
+  <button onclick="show('types')">Utility Types</button>
+  <button onclick="show('perf')">Performance</button>
+</nav>
+
+<!-- HOOKS + TS -->
+<div class="section active" id="hooks">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">useState</div>
+<pre><span class="cm">// Inferred</span>
+<span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="st">0</span>);
+
+<span class="cm">// Explicit generic</span>
+<span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>&lt;<span class="ty">User | null</span>&gt;(<span class="kw">null</span>);
+
+<span class="cm">// Object state</span>
+<span class="kw">const</span> [form, setForm] = <span class="fn">useState</span>&lt;<span class="ty">FormState</span>&gt;({
+  name: <span class="st">''</span>, email: <span class="st">''</span>
+});
+<span class="cm">// Merge partial updates</span>
+setForm(prev =&gt; ({ ...prev, name: <span class="st">'Eric'</span> }));</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">useEffect</div>
+<pre><span class="cm">// On mount</span>
+<span class="fn">useEffect</span>(() =&gt; { <span class="fn">fetchData</span>(); }, []);
+
+<span class="cm">// On dep change</span>
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="fn">fetchUser</span>(userId);
+}, [userId]);
+
+<span class="cm">// Cleanup</span>
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="kw">const</span> sub = <span class="fn">subscribe</span>();
+  <span class="kw">return</span> () =&gt; sub.<span class="fn">unsubscribe</span>();
+}, [dep]);</pre>
+    <div class="tip">⚠ Async inside: define an inner async fn, don't make the callback async.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">useRef</div>
+<pre><span class="cm">// DOM ref</span>
+<span class="kw">const</span> inputRef = <span class="fn">useRef</span>&lt;<span class="ty">HTMLInputElement</span>&gt;(<span class="kw">null</span>);
+<span class="kw">return</span> &lt;<span class="ty">input</span> ref={inputRef} /&gt;;
+inputRef.current?.<span class="fn">focus</span>();
+
+<span class="cm">// Mutable value (no re-render)</span>
+<span class="kw">const</span> timerRef = <span class="fn">useRef</span>&lt;<span class="ty">ReturnType</span>&lt;<span class="kw">typeof</span> setTimeout&gt;&gt;();
+
+<span class="cm">// Store prev value</span>
+<span class="kw">const</span> prev = <span class="fn">useRef</span>&lt;<span class="ty">number</span>&gt;();
+<span class="fn">useEffect</span>(() =&gt; { prev.current = value; });</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">useReducer</div>
+<pre><span class="kw">type</span> <span class="ty">Action</span> =
+  | { type: <span class="st">'inc'</span> }
+  | { type: <span class="st">'set'</span>; payload: <span class="ty">number</span> };
+
+<span class="kw">function</span> <span class="fn">reducer</span>(state: <span class="ty">number</span>, action: <span class="ty">Action</span>) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="st">'inc'</span>: <span class="kw">return</span> state + <span class="st">1</span>;
+    <span class="kw">case</span> <span class="st">'set'</span>: <span class="kw">return</span> action.payload;
+    <span class="kw">default</span>: <span class="kw">return</span> state;
+  }
+}
+<span class="kw">const</span> [n, dispatch] = <span class="fn">useReducer</span>(reducer, <span class="st">0</span>);</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">useContext</div>
+<pre><span class="kw">interface</span> <span class="ty">ThemeCtx</span> { dark: <span class="ty">boolean</span>; }
+
+<span class="kw">const</span> ThemeContext = <span class="fn">createContext</span>&lt;<span class="ty">ThemeCtx</span>&gt;(
+  { dark: <span class="kw">false</span> }
+);
+
+<span class="cm">// Provider</span>
+&lt;<span class="ty">ThemeContext.Provider</span> value={{ dark }}&gt;
+  {children}
+&lt;/<span class="ty">ThemeContext.Provider</span>&gt;
+
+<span class="cm">// Consumer</span>
+<span class="kw">const</span> { dark } = <span class="fn">useContext</span>(ThemeContext);</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Custom Hook Pattern</div>
+<pre><span class="kw">function</span> <span class="fn">useFetch</span>&lt;<span class="ty">T</span>&gt;(url: <span class="ty">string</span>) {
+  <span class="kw">const</span> [data, setData] = <span class="fn">useState</span>&lt;<span class="ty">T | null</span>&gt;(<span class="kw">null</span>);
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">true</span>);
+  <span class="kw">const</span> [error, setError] = <span class="fn">useState</span>&lt;<span class="ty">Error | null</span>&gt;(<span class="kw">null</span>);
+
+  <span class="fn">useEffect</span>(() =&gt; {
+    fetch(url)
+      .<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>() <span class="kw">as</span> <span class="ty">T</span>)
+      .<span class="fn">then</span>(setData)
+      .<span class="fn">catch</span>(setError)
+      .<span class="fn">finally</span>(() =&gt; <span class="fn">setLoading</span>(<span class="kw">false</span>));
+  }, [url]);
+
+  <span class="kw">return</span> { data, loading, error };
+}</pre>
+  </div>
+</div>
+</div>
+
+<!-- COMPONENTS -->
+<div class="section" id="components">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Functional Component</div>
+<pre><span class="cm">// Preferred: explicit return type</span>
+<span class="kw">interface</span> <span class="ty">Props</span> {
+  name: <span class="ty">string</span>;
+  count?: <span class="ty">number</span>;       <span class="cm">// optional</span>
+  onClick: () =&gt; <span class="ty">void</span>;
+  children?: <span class="ty">React.ReactNode</span>;
+}
+
+<span class="kw">function</span> <span class="fn">MyComp</span>({ name, count = <span class="st">0</span>, onClick }: <span class="ty">Props</span>): <span class="ty">JSX.Element</span> {
+  <span class="kw">return</span> &lt;<span class="ty">div</span> onClick={onClick}&gt;{name}: {count}&lt;/<span class="ty">div</span>&gt;;
+}
+
+<span class="cm">// React.FC (adds children implicitly in older TS)</span>
+<span class="kw">const</span> MyComp: <span class="ty">React.FC</span>&lt;<span class="ty">Props</span>&gt; = ({ name }) =&gt; &lt;<span class="ty">div</span>&gt;{name}&lt;/<span class="ty">div</span>&gt;;</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Generic Component</div>
+<pre><span class="kw">interface</span> <span class="ty">ListProps</span>&lt;<span class="ty">T</span>&gt; {
+  items: <span class="ty">T</span>[];
+  renderItem: (item: <span class="ty">T</span>) =&gt; <span class="ty">React.ReactNode</span>;
+  keyExtractor: (item: <span class="ty">T</span>) =&gt; <span class="ty">string</span>;
+}
+
+<span class="kw">function</span> <span class="fn">List</span>&lt;<span class="ty">T</span>&gt;({ items, renderItem, keyExtractor }: <span class="ty">ListProps</span>&lt;<span class="ty">T</span>&gt;) {
+  <span class="kw">return</span> (
+    &lt;<span class="ty">ul</span>&gt;
+      {items.<span class="fn">map</span>(item =&gt; (
+        &lt;<span class="ty">li</span> key={<span class="fn">keyExtractor</span>(item)}&gt;{<span class="fn">renderItem</span>(item)}&lt;/<span class="ty">li</span>&gt;
+      ))}
+    &lt;/<span class="ty">ul</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">forwardRef + displayName</div>
+<pre><span class="kw">const</span> Input = <span class="ty">React</span>.<span class="fn">forwardRef</span>&lt;
+  <span class="ty">HTMLInputElement</span>,
+  <span class="ty">React.InputHTMLAttributes</span>&lt;<span class="ty">HTMLInputElement</span>&gt;
+&gt;((props, ref) =&gt; (
+  &lt;<span class="ty">input</span> {...props} ref={ref} /&gt;
+));
+
+Input.displayName = <span class="st">'Input'</span>;
+
+<span class="cm">// useImperativeHandle</span>
+<span class="ty">React</span>.<span class="fn">useImperativeHandle</span>(ref, () =&gt; ({
+  <span class="fn">focus</span>: () =&gt; inputRef.current?.<span class="fn">focus</span>()
+}));</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Children Patterns</div>
+<pre><span class="cm">// Typed children</span>
+children: <span class="ty">React.ReactNode</span>   <span class="cm">// most permissive</span>
+children: <span class="ty">React.ReactElement</span> <span class="cm">// single element</span>
+children: <span class="ty">JSX.Element</span>        <span class="cm">// single JSX</span>
+children: <span class="ty">string</span>             <span class="cm">// text only</span>
+
+<span class="cm">// Render prop</span>
+<span class="kw">interface</span> <span class="ty">P</span> {
+  render: (val: <span class="ty">string</span>) =&gt; <span class="ty">React.ReactNode</span>;
+}
+<span class="kw">const</span> x = ({ render }: <span class="ty">P</span>) =&gt; render(<span class="st">'hello'</span>);
+
+<span class="cm">// Children as function</span>
+children: (val: <span class="ty">number</span>) =&gt; <span class="ty">React.ReactNode</span>;</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Component Composition</div>
+<pre><span class="cm">// Extend HTML element props</span>
+<span class="kw">interface</span> <span class="ty">ButtonProps</span>
+  <span class="kw">extends</span> <span class="ty">React.ButtonHTMLAttributes</span>&lt;<span class="ty">HTMLButtonElement</span>&gt; {
+  variant?: <span class="st">'primary'</span> | <span class="st">'ghost'</span>;
+}
+
+<span class="kw">function</span> <span class="fn">Button</span>({ variant = <span class="st">'primary'</span>, ...rest }: <span class="ty">ButtonProps</span>) {
+  <span class="kw">return</span> &lt;<span class="ty">button</span> className={variant} {...rest} /&gt;;
+}
+
+<span class="cm">// Polymorphic 'as' prop (simplified)</span>
+<span class="kw">type</span> <span class="ty">AsProp</span>&lt;<span class="ty">C</span> <span class="kw">extends</span> <span class="ty">React.ElementType</span>&gt; = {
+  as?: <span class="ty">C</span>;
+};</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Error Boundary</div>
+<pre><span class="kw">class</span> <span class="ty">ErrorBoundary</span> <span class="kw">extends</span> <span class="ty">React.Component</span>&lt;
+  { children: <span class="ty">React.ReactNode</span> },
+  { hasError: <span class="ty">boolean</span> }
+&gt; {
+  state = { hasError: <span class="kw">false</span> };
+
+  <span class="kw">static</span> <span class="fn">getDerivedStateFromError</span>() {
+    <span class="kw">return</span> { hasError: <span class="kw">true</span> };
+  }
+  <span class="fn">render</span>() {
+    <span class="kw">return</span> <span class="kw">this</span>.state.hasError
+      ? &lt;<span class="ty">h2</span>&gt;Error!&lt;/<span class="ty">h2</span>&gt; : <span class="kw">this</span>.props.children;
+  }
+}</pre>
+  </div>
+</div>
+</div>
+
+<!-- EVENTS -->
+<div class="section" id="events">
+<div class="grid two-col">
+  <div class="card">
+    <div class="card-title">Event Handler Types</div>
+    <table>
+      <tr><th>Event</th><th>Handler Type</th></tr>
+      <tr><td>onClick</td><td><code>React.MouseEvent&lt;HTMLButtonElement&gt;</code></td></tr>
+      <tr><td>onChange (input)</td><td><code>React.ChangeEvent&lt;HTMLInputElement&gt;</code></td></tr>
+      <tr><td>onChange (select)</td><td><code>React.ChangeEvent&lt;HTMLSelectElement&gt;</code></td></tr>
+      <tr><td>onSubmit</td><td><code>React.FormEvent&lt;HTMLFormElement&gt;</code></td></tr>
+      <tr><td>onKeyDown</td><td><code>React.KeyboardEvent&lt;HTMLInputElement&gt;</code></td></tr>
+      <tr><td>onFocus/onBlur</td><td><code>React.FocusEvent&lt;HTMLInputElement&gt;</code></td></tr>
+      <tr><td>onDrag</td><td><code>React.DragEvent&lt;HTMLDivElement&gt;</code></td></tr>
+      <tr><td>handler prop</td><td><code>React.MouseEventHandler&lt;HTMLButtonElement&gt;</code></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Common Patterns</div>
+<pre><span class="cm">// Input change</span>
+<span class="kw">const</span> <span class="fn">handleChange</span> = (e: <span class="ty">React.ChangeEvent</span>&lt;<span class="ty">HTMLInputElement</span>&gt;) =&gt; {
+  setValue(e.target.value);
+};
+
+<span class="cm">// Form submit + prevent default</span>
+<span class="kw">const</span> <span class="fn">handleSubmit</span> = (e: <span class="ty">React.FormEvent</span>&lt;<span class="ty">HTMLFormElement</span>&gt;) =&gt; {
+  e.<span class="fn">preventDefault</span>();
+  <span class="fn">doSomething</span>();
+};
+
+<span class="cm">// Keyboard shortcut</span>
+<span class="kw">const</span> <span class="fn">handleKey</span> = (e: <span class="ty">React.KeyboardEvent</span>) =&gt; {
+  <span class="kw">if</span> (e.key === <span class="st">'Enter'</span> && e.metaKey) <span class="fn">submit</span>();
+};
+
+<span class="cm">// Get value from event target</span>
+<span class="kw">const</span> val = (e.target <span class="kw">as</span> <span class="ty">HTMLInputElement</span>).value;</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Synthetic vs Native</div>
+<pre><span class="cm">// React wraps native events</span>
+<span class="cm">// Access native: e.nativeEvent</span>
+<span class="kw">const</span> <span class="fn">onClick</span> = (e: <span class="ty">React.MouseEvent</span>) =&gt; {
+  e.<span class="fn">stopPropagation</span>();  <span class="cm">// synthetic</span>
+  e.<span class="fn">preventDefault</span>();  <span class="cm">// synthetic</span>
+  e.nativeEvent;         <span class="cm">// underlying DOM event</span>
+  e.currentTarget;       <span class="cm">// always the bound element</span>
+  e.target;              <span class="cm">// element that fired</span>
+};</pre>
+    <div class="tip">💡 React 17+: events attach to root, not document. stopPropagation() stops React tree, not DOM tree.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Inline vs Handler</div>
+<pre><span class="cm">// Inline (avoid complex logic)</span>
+&lt;<span class="ty">button</span> onClick={() =&gt; <span class="fn">setOpen</span>(<span class="kw">true</span>)}&gt;Open&lt;/<span class="ty">button</span>&gt;
+
+<span class="cm">// Curried handler (passes extra args)</span>
+<span class="kw">const</span> <span class="fn">handleClick</span> = (id: <span class="ty">string</span>) =&gt;
+  (e: <span class="ty">React.MouseEvent</span>) =&gt; { ... };
+
+&lt;<span class="ty">button</span> onClick={<span class="fn">handleClick</span>(item.id)}&gt;...&lt;/<span class="ty">button</span>&gt;
+
+<span class="cm">// Typed prop handler</span>
+<span class="kw">interface</span> <span class="ty">P</span> {
+  onSelect: <span class="ty">React.MouseEventHandler</span>&lt;<span class="ty">HTMLLIElement</span>&gt;;
+}</pre>
+  </div>
+</div>
+</div>
+
+<!-- PATTERNS -->
+<div class="section" id="patterns">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">Compound Components</div>
+<pre><span class="kw">const</span> TabContext = <span class="fn">createContext</span>&lt;{ active: <span class="ty">string</span> }&gt;({ active: <span class="st">''</span> });
+
+<span class="kw">function</span> <span class="fn">Tabs</span>({ children, defaultTab }: <span class="ty">TabsProps</span>) {
+  <span class="kw">const</span> [active, setActive] = <span class="fn">useState</span>(defaultTab);
+  <span class="kw">return</span> &lt;<span class="ty">TabContext.Provider</span> value={{ active }}&gt;{children}&lt;/...&gt;;
+}
+
+Tabs.Tab = <span class="kw">function</span> <span class="fn">Tab</span>({ id, children }: ...) {
+  <span class="kw">const</span> { active } = <span class="fn">useContext</span>(TabContext);
+  <span class="kw">return</span> &lt;<span class="ty">div</span> aria-selected={active === id}&gt;{children}&lt;/<span class="ty">div</span>&gt;;
+};
+
+<span class="cm">// Usage: &lt;Tabs&gt;&lt;Tabs.Tab id="a"&gt;A&lt;/Tabs.Tab&gt;&lt;/Tabs&gt;</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">HOC Pattern</div>
+<pre><span class="kw">function</span> <span class="fn">withAuth</span>&lt;<span class="ty">P</span> <span class="kw">extends</span> <span class="ty">object</span>&gt;(
+  <span class="ty">Component</span>: <span class="ty">React.ComponentType</span>&lt;<span class="ty">P</span>&gt;
+) {
+  <span class="kw">return function</span> <span class="fn">WithAuth</span>(props: <span class="ty">P</span>) {
+    <span class="kw">const</span> { isAuthed } = <span class="fn">useAuth</span>();
+    <span class="kw">if</span> (!isAuthed) <span class="kw">return</span> &lt;<span class="ty">Redirect</span> to=<span class="st">"/login"</span> /&gt;;
+    <span class="kw">return</span> &lt;<span class="ty">Component</span> {...props} /&gt;;
+  };
+}
+
+<span class="kw">const</span> ProtectedPage = <span class="fn">withAuth</span>(Dashboard);
+<span class="cm">// ProtectedPage.displayName = 'withAuth(Dashboard)'</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Controlled vs Uncontrolled</div>
+<pre><span class="cm">// Controlled (React owns value)</span>
+<span class="kw">const</span> [val, setVal] = <span class="fn">useState</span>(<span class="st">''</span>);
+&lt;<span class="ty">input</span> value={val} onChange={e =&gt; <span class="fn">setVal</span>(e.target.value)} /&gt;
+
+<span class="cm">// Uncontrolled (DOM owns value)</span>
+<span class="kw">const</span> ref = <span class="fn">useRef</span>&lt;<span class="ty">HTMLInputElement</span>&gt;(<span class="kw">null</span>);
+&lt;<span class="ty">input</span> defaultValue=<span class="st">"initial"</span> ref={ref} /&gt;;
+ref.current?.value; <span class="cm">// read on demand</span>
+
+<span class="cm">// Controlled component pattern</span>
+<span class="kw">interface</span> <span class="ty">P</span> { value: <span class="ty">string</span>; onChange(v: <span class="ty">string</span>): <span class="ty">void</span>; }</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Lifting State Up</div>
+<pre><span class="cm">// Parent owns shared state</span>
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [shared, setShared] = <span class="fn">useState</span>(<span class="st">''</span>);
+  <span class="kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="ty">ChildA</span> value={shared} onChange={setShared} /&gt;
+      &lt;<span class="ty">ChildB</span> value={shared} /&gt;
+    &lt;/&gt;
+  );
+}
+
+<span class="cm">// Both children stay in sync</span>
+<span class="cm">// ChildA writes, ChildB reads</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Portal + Suspense</div>
+<pre><span class="cm">// Portal (render outside DOM hierarchy)</span>
+<span class="kw">import</span> { createPortal } <span class="kw">from</span> <span class="st">'react-dom'</span>;
+createPortal(&lt;<span class="ty">Modal</span> /&gt;, document.<span class="fn">getElementById</span>(<span class="st">'modal-root'</span>)!);
+
+<span class="cm">// Suspense + lazy</span>
+<span class="kw">const</span> Dashboard = <span class="ty">React</span>.<span class="fn">lazy</span>(() =&gt; <span class="kw">import</span>(<span class="st">'./Dashboard'</span>));
+
+&lt;<span class="ty">Suspense</span> fallback={&lt;<span class="ty">Spinner</span> /&gt;}&gt;
+  &lt;<span class="ty">Dashboard</span> /&gt;
+&lt;/<span class="ty">Suspense</span>&gt;</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">State Machines (enum)</div>
+<pre><span class="kw">type</span> <span class="ty">Status</span> = <span class="st">'idle'</span> | <span class="st">'loading'</span> | <span class="st">'success'</span> | <span class="st">'error'</span>;
+
+<span class="kw">const</span> [status, setStatus] = <span class="fn">useState</span>&lt;<span class="ty">Status</span>&gt;(<span class="st">'idle'</span>);
+
+<span class="cm">// Discriminated union state</span>
+<span class="kw">type</span> <span class="ty">State</span> =
+  | { status: <span class="st">'idle'</span> }
+  | { status: <span class="st">'loading'</span> }
+  | { status: <span class="st">'success'</span>; data: <span class="ty">Data</span> }
+  | { status: <span class="st">'error'</span>; error: <span class="ty">Error</span> };
+<span class="cm">// Narrows automatically in if/switch</span></pre>
+  </div>
+</div>
+</div>
+
+<!-- UTILITY TYPES -->
+<div class="section" id="types">
+<div class="grid two-col">
+  <div class="card">
+    <div class="card-title">TypeScript Utility Types</div>
+    <table>
+      <tr><th>Type</th><th>Effect</th><th>Example</th></tr>
+      <tr><td><code>Partial&lt;T&gt;</code></td><td>All props optional</td><td><code>Partial&lt;User&gt;</code></td></tr>
+      <tr><td><code>Required&lt;T&gt;</code></td><td>All props required</td><td><code>Required&lt;Config&gt;</code></td></tr>
+      <tr><td><code>Readonly&lt;T&gt;</code></td><td>Immutable</td><td><code>Readonly&lt;State&gt;</code></td></tr>
+      <tr><td><code>Pick&lt;T, K&gt;</code></td><td>Keep keys K</td><td><code>Pick&lt;User, 'id'|'name'&gt;</code></td></tr>
+      <tr><td><code>Omit&lt;T, K&gt;</code></td><td>Remove keys K</td><td><code>Omit&lt;User, 'password'&gt;</code></td></tr>
+      <tr><td><code>Record&lt;K,V&gt;</code></td><td>Map type</td><td><code>Record&lt;string, number&gt;</code></td></tr>
+      <tr><td><code>ReturnType&lt;T&gt;</code></td><td>Fn return type</td><td><code>ReturnType&lt;typeof fn&gt;</code></td></tr>
+      <tr><td><code>Parameters&lt;T&gt;</code></td><td>Fn param tuple</td><td><code>Parameters&lt;typeof fn&gt;</code></td></tr>
+      <tr><td><code>NonNullable&lt;T&gt;</code></td><td>Remove null/undef</td><td><code>NonNullable&lt;string|null&gt;</code></td></tr>
+      <tr><td><code>Extract&lt;T,U&gt;</code></td><td>Intersection</td><td><code>Extract&lt;A|B, B|C&gt;</code></td></tr>
+      <tr><td><code>Exclude&lt;T,U&gt;</code></td><td>Difference</td><td><code>Exclude&lt;A|B, B&gt;</code></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">React-Specific Types</div>
+    <table>
+      <tr><th>Type</th><th>Use for</th></tr>
+      <tr><td><code>React.ReactNode</code></td><td>Any renderable (string, elem, null…)</td></tr>
+      <tr><td><code>React.ReactElement</code></td><td>JSX element specifically</td></tr>
+      <tr><td><code>React.FC&lt;P&gt;</code></td><td>Function component (adds children)</td></tr>
+      <tr><td><code>React.ComponentType&lt;P&gt;</code></td><td>FC or class, useful for HOCs</td></tr>
+      <tr><td><code>React.ElementType</code></td><td>String or component ('div', Button)</td></tr>
+      <tr><td><code>React.CSSProperties</code></td><td>style={{ }} props</td></tr>
+      <tr><td><code>React.Dispatch&lt;A&gt;</code></td><td>useReducer dispatch</td></tr>
+      <tr><td><code>React.SetStateAction&lt;T&gt;</code></td><td>useState setter arg</td></tr>
+      <tr><td><code>React.Ref&lt;T&gt;</code></td><td>ref prop</td></tr>
+      <tr><td><code>React.MutableRefObject&lt;T&gt;</code></td><td>useRef (non-null)</td></tr>
+    </table>
+  </div>
+
+  <div class="card span2">
+    <div class="card-title">Advanced Patterns</div>
+<pre><span class="cm">// Discriminated union (narrows w/ switch)</span>
+<span class="kw">type</span> <span class="ty">Result</span>&lt;<span class="ty">T</span>&gt; = { ok: <span class="kw">true</span>; data: <span class="ty">T</span> } | { ok: <span class="kw">false</span>; error: <span class="ty">string</span> };
+
+<span class="cm">// Template literal types</span>
+<span class="kw">type</span> <span class="ty">EventName</span> = <span class="st">`on${Capitalize&lt;string&gt;}`</span>;
+
+<span class="cm">// Conditional types</span>
+<span class="kw">type</span> <span class="ty">IsArray</span>&lt;<span class="ty">T</span>&gt; = <span class="ty">T</span> <span class="kw">extends</span> <span class="kw">any</span>[] ? <span class="kw">true</span> : <span class="kw">false</span>;
+
+<span class="cm">// Mapped types</span>
+<span class="kw">type</span> <span class="ty">Optional</span>&lt;<span class="ty">T</span>, <span class="ty">K</span> <span class="kw">extends keyof</span> <span class="ty">T</span>&gt; = <span class="ty">Omit</span>&lt;<span class="ty">T</span>, <span class="ty">K</span>&gt; &amp; <span class="ty">Partial</span>&lt;<span class="ty">Pick</span>&lt;<span class="ty">T</span>, <span class="ty">K</span>&gt;&gt;;
+
+<span class="cm">// Infer keyword</span>
+<span class="kw">type</span> <span class="ty">UnwrapPromise</span>&lt;<span class="ty">T</span>&gt; = <span class="ty">T</span> <span class="kw">extends</span> <span class="ty">Promise</span>&lt;<span class="kw">infer</span> <span class="ty">U</span>&gt; ? <span class="ty">U</span> : <span class="ty">T</span>;</pre>
+  </div>
+</div>
+</div>
+
+<!-- PERFORMANCE -->
+<div class="section" id="perf">
+<div class="grid">
+  <div class="card">
+    <div class="card-title">React.memo</div>
+<pre><span class="cm">// Skip re-render if props unchanged</span>
+<span class="kw">const</span> ExpensiveChild = <span class="ty">React</span>.<span class="fn">memo</span>(
+  <span class="kw">function</span> <span class="fn">Child</span>({ data }: { data: <span class="ty">Data</span> }) {
+    <span class="kw">return</span> &lt;<span class="ty">div</span>&gt;{data.value}&lt;/<span class="ty">div</span>&gt;;
+  }
+);
+
+<span class="cm">// Custom comparator</span>
+<span class="ty">React</span>.<span class="fn">memo</span>(Child, (prev, next) =&gt;
+  prev.id === next.id
+);
+
+<span class="cm">// ⚠ Only helps if parent re-renders often</span>
+<span class="cm">// ⚠ Inline objects/fns bypass memo!</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">useCallback</div>
+<pre><span class="cm">// Stable fn reference across renders</span>
+<span class="kw">const</span> handleClick = <span class="fn">useCallback</span>(
+  (id: <span class="ty">string</span>) =&gt; { <span class="fn">deleteItem</span>(id); },
+  [deleteItem] <span class="cm">// deps</span>
+);
+
+<span class="cm">// Pair with React.memo to prevent child re-render</span>
+<span class="kw">const</span> fetchPage = <span class="fn">useCallback</span>(
+  <span class="kw">async</span> (page: <span class="ty">number</span>) =&gt; {
+    <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">api</span>(page);
+    <span class="fn">setItems</span>(data);
+  },
+  [] <span class="cm">// api is stable</span>
+);</pre>
+    <div class="tip">💡 useMemo memoizes a value; useCallback memoizes a function.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">useMemo</div>
+<pre><span class="cm">// Memoize expensive computation</span>
+<span class="kw">const</span> sorted = <span class="fn">useMemo</span>(
+  () =&gt; [...items].<span class="fn">sort</span>((a, b) =&gt; a.name.<span class="fn">localeCompare</span>(b.name)),
+  [items]
+);
+
+<span class="cm">// Stable object reference (stops child re-render)</span>
+<span class="kw">const</span> config = <span class="fn">useMemo</span>(
+  () =&gt; ({ timeout: <span class="st">3000</span>, retries }),
+  [retries]
+);
+
+<span class="cm">// ⚠ Don't overuse — has its own cost</span>
+<span class="cm">// Use when: expensive calc OR stable ref needed</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Reconciliation & Keys</div>
+<pre><span class="cm">// Key tells React element identity</span>
+items.<span class="fn">map</span>(item =&gt; &lt;<span class="ty">Row</span> key={item.id} /&gt;); <span class="cm">// ✅</span>
+items.<span class="fn">map</span>((item, i) =&gt; &lt;<span class="ty">Row</span> key={i} /&gt;);  <span class="cm">// ⚠ avoid</span>
+
+<span class="cm">// Force re-mount with key change</span>
+&lt;<span class="ty">Form</span> key={userId} /&gt; <span class="cm">// new key = fresh mount</span>
+
+<span class="cm">// Fragment shorthand</span>
+&lt;&gt;...&lt;/&gt;  <span class="cm">// no DOM node</span>
+&lt;<span class="ty">React.Fragment</span> key={id}&gt;...&lt;/<span class="ty">React.Fragment</span>&gt; <span class="cm">// keyed</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Batching & Transitions</div>
+<pre><span class="cm">// React 18: automatic batching everywhere</span>
+<span class="fn">setTimeout</span>(() =&gt; {
+  <span class="fn">setA</span>(<span class="st">1</span>); <span class="fn">setB</span>(<span class="st">2</span>); <span class="cm">// single re-render in React 18</span>
+}, <span class="st">0</span>);
+
+<span class="cm">// Opt-out of batching</span>
+<span class="kw">import</span> { flushSync } <span class="kw">from</span> <span class="st">'react-dom'</span>;
+<span class="fn">flushSync</span>(() =&gt; <span class="fn">setState</span>(x));
+
+<span class="cm">// useTransition: mark low-priority update</span>
+<span class="kw">const</span> [isPending, startTransition] = <span class="fn">useTransition</span>();
+<span class="fn">startTransition</span>(() =&gt; <span class="fn">setFilter</span>(val)); <span class="cm">// deferrable</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Common Pitfalls</div>
+    <table>
+      <tr><th>Pitfall</th><th>Fix</th></tr>
+      <tr><td>Stale closure in effect</td><td>Add dep or use ref</td></tr>
+      <tr><td>Infinite effect loop</td><td>Check deps, stable refs</td></tr>
+      <tr><td>New obj/arr each render</td><td><code>useMemo</code> or move outside</td></tr>
+      <tr><td>Missing cleanup</td><td>Return fn from useEffect</td></tr>
+      <tr><td>State mutation</td><td>Always return new object/array</td></tr>
+      <tr><td>Index as key</td><td>Use stable ID</td></tr>
+      <tr><td>Over-render with context</td><td>Split contexts or memoize</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<script src="./assets/refsheet.js"></script>
+</body>
+</html>
